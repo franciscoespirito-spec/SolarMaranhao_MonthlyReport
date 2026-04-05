@@ -2,7 +2,12 @@
   "permissions": {
     "allow": [
       "Bash(gh auth:*)",
-      "Bash(git --version)"
+      "Bash(git --version)",
+      "Bash(chmod +x /root/projetos/auto_sync.sh)",
+      "Bash(systemctl daemon-reload:*)",
+      "Bash(systemctl enable:*)",
+      "Bash(systemctl start:*)",
+      "Bash(systemctl status:*)"
     ]
   }
 }
