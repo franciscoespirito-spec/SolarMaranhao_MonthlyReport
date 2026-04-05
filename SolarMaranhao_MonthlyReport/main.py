@@ -17,6 +17,7 @@ from kpi_calculator import calculate_all_kpis
 from chart_generator import generate_all_charts
 from ai_analyst import generate_analysis
 from report_builder import build_report
+from email_sender import send_report_email
 
 MESES_PT_FULL = {
     1: "Janeiro", 2: "Fevereiro", 3: "Março", 4: "Abril", 5: "Maio", 6: "Junho",
