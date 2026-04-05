@@ -20,7 +20,7 @@ def send_report_email(pdf_path, year, month):
     Envia o relatório PDF por email via Gmail SMTP.
     Usa as variáveis de ambiente GMAIL_FROM e GMAIL_APP_PASSWORD.
     """
-    gmail_from = os.environ.get("GMAIL_FROM", "francisco.espirito@gmail.com")
+    gmail_from = os.environ.get("GMAIL_FROM", "francisco.santo@beng.eng.br")
     app_password = os.environ.get("GMAIL_APP_PASSWORD", "").replace(" ", "")
 
     if not app_password:
