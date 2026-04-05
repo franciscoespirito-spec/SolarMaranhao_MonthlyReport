@@ -7,7 +7,7 @@ import json
 
 import anthropic
 
-from config import PLANTS, PLANT_IDS, TARGET_MONTHLY_KWH, MESES_PT_FULL
+from config import PLANTS, PLANT_IDS, TARGET_MONTHLY_KWH
 
 MESES_PT_FULL_LOCAL = {
     1: "Janeiro", 2: "Fevereiro", 3: "Março", 4: "Abril", 5: "Maio", 6: "Junho",
