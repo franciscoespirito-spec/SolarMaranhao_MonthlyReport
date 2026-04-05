@@ -101,9 +101,11 @@ def main():
 
     # 6. Email
     if not args.no_email:
-        print(f"[6/6] PDF pronto para envio por email.")
-        print(f"  - Arquivo: {os.path.abspath(output_path)}")
-        print(f"  - Use Gmail MCP para enviar para francisco.espirito@gmail.com")
+        print(f"[6/6] Enviando email...")
+        try:
+            send_report_email(output_path, target_year, target_month)
+        except Exception as e:
+            print(f"  - Erro ao enviar email: {e}")
     else:
         print("[6/6] Email desabilitado (--no-email).")
 
