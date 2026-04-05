@@ -323,3 +323,13 @@ To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
 To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
    b65e384..a90e1e5  main -> main
 [Sun Apr  5 03:18:44 UTC 2026] Sincronizado: auto: 2026-04-05 03:18:43 - MODIFY chart_generator.py.tmp.18891.1775359112766
+[main e22d546] auto: 2026-04-05 03:18:47 - MOVED_FROM chart_generator.py.tmp.18891.1775359112766
+ 6 files changed, 6 insertions(+)
+ create mode 100644 SolarMaranhao_MonthlyReport/output/daily_variation.png
+ create mode 100644 SolarMaranhao_MonthlyReport/output/monthly_generation.png
+ create mode 100644 SolarMaranhao_MonthlyReport/output/ranking.png
+ create mode 100644 SolarMaranhao_MonthlyReport/output/yoy_comparison.png
+ create mode 100644 SolarMaranhao_MonthlyReport/output/ytd_trend.png
+To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
+   a90e1e5..e22d546  main -> main
+[Sun Apr  5 03:18:48 UTC 2026] Sincronizado: auto: 2026-04-05 03:18:47 - MOVED_FROM chart_generator.py.tmp.18891.1775359112766
