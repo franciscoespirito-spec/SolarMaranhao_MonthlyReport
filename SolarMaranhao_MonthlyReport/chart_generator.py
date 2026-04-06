@@ -179,8 +179,16 @@ def _chart_ytd_trend(kpis, monthly_totals_df, output_dir):
         ax.plot(months, year_data[pid].values, marker="o", markersize=5,
                 color=PLANT_COLORS[pid], linewidth=2.0, label=PLANTS[pid]["name"])
 
+    lower = TARGET_MONTHLY_KWH * (1 - TARGET_TOLERANCE)
+    upper = TARGET_MONTHLY_KWH * (1 + TARGET_TOLERANCE)
+
+    ax.axhspan(lower, upper, alpha=0.10, color=GOLD)
+    ax.axhline(y=upper, color=GOLD, linestyle=":", linewidth=1.2, alpha=0.9,
+               label=f"+{TARGET_TOLERANCE:.0%} ({upper:,.0f} kWh)")
+    ax.axhline(y=lower, color=GOLD, linestyle=":", linewidth=1.2, alpha=0.9,
+               label=f"−{TARGET_TOLERANCE:.0%} ({lower:,.0f} kWh)")
     ax.axhline(y=TARGET_MONTHLY_KWH, color="#9B2335", linestyle="--",
-               linewidth=1.2, alpha=0.8, label="Meta")
+               linewidth=1.5, alpha=0.9, label=f"Meta ({TARGET_MONTHLY_KWH:,.0f} kWh)")
 
     ax.set_title(f"Histórico de Geração Mensal — {year}")
     ax.set_ylabel("kWh")
