@@ -552,8 +552,9 @@ def build_report(kpis, analysis, charts, output_path):
             if desc:
                 right_lines.append(Paragraph(desc, styles["BodyLeft"]))
             if evidencia:
+                steel_c = _HEX["steel"]
                 right_lines.append(Paragraph(
-                    f"<i><font color='#{_HEX[\"steel\"]}'>Evidência: {evidencia}</font></i>",
+                    f"<i><font color='#{steel_c}'>Evidência: {evidencia}</font></i>",
                     styles["Caption"],
                 ))
             if kwh_est and kwh_est != "—":
