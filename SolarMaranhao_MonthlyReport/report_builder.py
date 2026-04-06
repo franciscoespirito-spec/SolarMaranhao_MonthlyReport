@@ -503,21 +503,22 @@ def build_report(kpis, analysis, charts, output_path):
     causas = analysis.get("analise_causas", [])
     if isinstance(causas, list):
         for item in causas:
-            causa   = item.get("causa", "")
-            desc    = item.get("descricao", "")
-            impacto = item.get("impacto", "").lower()
+            causa     = _xe(item.get("causa", ""))
+            desc      = _xe(item.get("descricao", ""))
+            imp_raw   = item.get("impacto", "")
+            imp_label = _xe(imp_raw)
+            impacto   = imp_raw.lower()
             if impacto in ("baixo", "não identificado", "nao identificado"):
                 dot_color = _HEX["green"]
             elif "médio" in impacto or "medio" in impacto:
                 dot_color = _HEX["amber"]
             else:
                 dot_color = _HEX["red"]
-            imp_label = item.get("impacto", "")
             steel_hex = _HEX["steel"]
             story.append(Paragraph(
-                f"<font color='#{dot_color}'>●</font>  "
+                f"<font color='#{dot_color}'>&#9679;</font>  "
                 f"<b>{causa}</b>  "
-                f"<font color='#{steel_hex}'>— Impacto: {imp_label}</font>",
+                f"<font color='#{steel_hex}'>&mdash; Impacto: {imp_label}</font>",
                 styles["SubSectionTitle"],
             ))
             story.append(Paragraph(desc, styles["Body"]))
@@ -525,7 +526,7 @@ def build_report(kpis, analysis, charts, output_path):
     elif isinstance(causas, str):
         for line in causas.split("\n"):
             if line.strip():
-                story.append(Paragraph(line, styles["Body"]))
+                story.append(Paragraph(_xe(line), styles["Body"]))
     story.append(PageBreak())
 
     # ═══════════════════════════════════════════════════════════
