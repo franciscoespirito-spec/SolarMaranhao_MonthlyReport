@@ -129,6 +129,19 @@ def _make_table(data, col_widths=None, header=True):
     return table
 
 
+def _add_page_footer(canvas, doc):
+    """Adiciona rodapé com número de página em todas as páginas."""
+    canvas.saveState()
+    canvas.setFont("Helvetica", 7)
+    canvas.setFillColor(colors.gray)
+    page_width = A4[0]
+    footer_y = 1.2 * cm
+    canvas.drawString(2 * cm, footer_y, "Relatório Mensal de Geração Solar — Maranhão")
+    canvas.drawRightString(page_width - 2 * cm, footer_y, f"Página {doc.page}")
+    canvas.line(2 * cm, footer_y + 0.4 * cm, page_width - 2 * cm, footer_y + 0.4 * cm)
+    canvas.restoreState()
+
+
 def build_report(kpis, analysis, charts, output_path):
     """
     Monta o PDF completo do relatório.
