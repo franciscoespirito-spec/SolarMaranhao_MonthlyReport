@@ -201,13 +201,15 @@ def build_report(kpis, analysis, charts, output_path):
 
     # Tabela de KPIs
     kpi_data = [["Usina", "Geração\n(kWh)", "Meta\n(kWh)", "Gap\n(%)", "FC\n(%)",
-                 "Yield\n(kWh/kWp)", "YTD\n(kWh)", "Status"]]
+                 "Yield\n(kWh/kWp)", "Disp.\n(%)", "YTD\n(kWh)", "Status"]]
     for pid in PLANT_IDS:
         gen = kpis["month_generation"][pid]
         gap = kpis["gap_vs_target"][pid]
         fc = kpis["capacity_factor"][pid]
         sy = kpis["specific_yield"][pid]
         ytd = kpis["ytd"][pid]
+        av = kpis.get("availability", {}).get(pid, {})
+        disp = f"{av.get('availability_pct', 0):.0f}%" if av else "-"
         status = gap["status"].upper()
         kpi_data.append([
             PLANTS[pid]["name"],
@@ -216,6 +218,7 @@ def build_report(kpis, analysis, charts, output_path):
             f"{gap['percent']:+.1f}%",
             f"{fc:.1%}",
             f"{sy:.1f}",
+            disp,
             f"{ytd:,.0f}",
             status,
         ])
