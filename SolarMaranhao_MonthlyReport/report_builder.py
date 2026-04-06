@@ -376,10 +376,10 @@ def build_report(kpis, analysis, charts, output_path):
 
     # Gráficos seção 2
     if charts.get("monthly_generation"):
-        story.append(Image(charts["monthly_generation"], width=16.6 * cm, height=8.3 * cm))
+        story.append(Image(charts["monthly_generation"], width=16.6 * cm, height=7.8 * cm))
     story.append(Spacer(1, 0.3 * cm))
     if charts.get("ytd_trend"):
-        story.append(Image(charts["ytd_trend"], width=16.6 * cm, height=8.3 * cm))
+        story.append(Image(charts["ytd_trend"], width=16.6 * cm, height=7.8 * cm))
     story.append(PageBreak())
 
     # ═══════════════════════════════════════════════════════════
