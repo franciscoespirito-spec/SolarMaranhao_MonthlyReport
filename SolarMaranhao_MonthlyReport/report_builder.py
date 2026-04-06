@@ -45,6 +45,16 @@ AMBER_DK   = HexColor("#B7791F")
 AMBER_BG   = HexColor("#FEFCBF")
 WHITE      = colors.white
 
+# Hex strings para uso direto em markup Paragraph
+_HEX = {
+    "green":  "276749",
+    "red":    "9B2335",
+    "amber":  "B7791F",
+    "navy":   "1B2A4A",
+    "steel":  "718096",
+    "gold":   "C9A84C",
+}
+
 
 # ── Estilos ─────────────────────────────────────────────────────
 def _get_styles():
