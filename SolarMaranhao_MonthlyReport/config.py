@@ -157,23 +157,32 @@ SUMARIO_KPI_COL_MAP = {
     "total": "K",
 }
 
-# Cores do relatório
+# Paleta profissional — estilo BIG4/McKinsey
 COLORS = {
-    "green": "#27AE60",
-    "yellow": "#F39C12",
-    "red": "#E74C3C",
-    "blue": "#2980B9",
-    "dark": "#2C3E50",
-    "light_gray": "#ECF0F1",
+    "navy":        "#1B2A4A",   # Azul marinho — headers, títulos
+    "navy_med":    "#2C5282",   # Azul marinho médio
+    "gold":        "#C9A84C",   # Dourado — destaques, separadores
+    "gold_light":  "#FBF3DC",   # Dourado claro — fundo destaques
+    "charcoal":    "#2D3748",   # Cinza escuro — texto corpo
+    "steel":       "#718096",   # Cinza aço — legendas
+    "silver":      "#CBD5E0",   # Prata — bordas
+    "bg_alt":      "#F7F9FC",   # Fundo claro — linhas alternadas
+    "green":       "#276749",   # Verde escuro — status positivo
+    "green_bg":    "#C6F6D5",   # Verde claro — fundo positivo
+    "red":         "#9B2335",   # Vermelho escuro — status negativo
+    "red_bg":      "#FED7D7",   # Vermelho claro — fundo negativo
+    "amber":       "#B7791F",   # Âmbar — status atenção
+    "amber_bg":    "#FEFCBF",   # Âmbar claro — fundo atenção
+    "white":       "#FFFFFF",
 }
 
-# Paleta de cores por usina (para gráficos)
+# Paleta de cores por usina — profissional, sem cores saturadas
 PLANT_COLORS = {
-    "spe1": "#2980B9",   # azul
-    "spe2": "#27AE60",   # verde
-    "spe3": "#F39C12",   # amarelo
-    "spe5": "#E74C3C",   # vermelho
-    "spe6": "#8E44AD",   # roxo
+    "spe1": "#2C5282",   # azul profundo
+    "spe2": "#276749",   # verde escuro
+    "spe3": "#C05621",   # laranja escuro
+    "spe5": "#9B2335",   # vermelho escuro
+    "spe6": "#553C9A",   # roxo escuro
 }
 
 # Caminho do Excel
