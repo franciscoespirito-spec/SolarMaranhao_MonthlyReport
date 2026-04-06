@@ -498,31 +498,96 @@ def build_report(kpis, analysis, charts, output_path):
     # ═══════════════════════════════════════════════════════════
     story.append(Paragraph("4. Análise de Causas", styles["SectionTitle"]))
     story.append(HRFlowable(width="100%", color=GOLD, thickness=1.0))
+    story.append(Spacer(1, 0.2 * cm))
+    story.append(Paragraph(
+        "Decomposição diagnóstica das variações de geração por tipo de efeito — "
+        "separando causas externas (clima, sazonalidade) de causas internas (operacional, técnica, monitoramento).",
+        styles["Caption"],
+    ))
     story.append(Spacer(1, 0.3 * cm))
+
+    def _impact_colors(imp_raw):
+        """Retorna (bg_color, text_color, label) para cada nível de impacto."""
+        imp = imp_raw.strip().lower()
+        if "alto" in imp or "crítico" in imp or "critico" in imp:
+            return RED_BG, RED_DK, imp_raw.upper()
+        elif "médio" in imp or "medio" in imp:
+            return AMBER_BG, AMBER_DK, imp_raw.upper()
+        elif "baixo" in imp:
+            return GREEN_BG, GREEN_DK, imp_raw.upper()
+        else:
+            return BG_ALT, STEEL, "NÃO IDENT."
 
     causas = analysis.get("analise_causas", [])
     if isinstance(causas, list):
         for item in causas:
-            causa     = _xe(item.get("causa", ""))
-            desc      = _xe(item.get("descricao", ""))
-            imp_raw   = item.get("impacto", "")
-            imp_label = _xe(imp_raw)
-            impacto   = imp_raw.lower()
-            if impacto in ("baixo", "não identificado", "nao identificado"):
-                dot_color = _HEX["green"]
-            elif "médio" in impacto or "medio" in impacto:
-                dot_color = _HEX["amber"]
-            else:
-                dot_color = _HEX["red"]
-            steel_hex = _HEX["steel"]
-            story.append(Paragraph(
-                f"<font color='#{dot_color}'>&#9679;</font>  "
-                f"<b>{causa}</b>  "
-                f"<font color='#{steel_hex}'>&mdash; Impacto: {imp_label}</font>",
-                styles["SubSectionTitle"],
-            ))
-            story.append(Paragraph(desc, styles["Body"]))
-            story.append(Spacer(1, 0.15 * cm))
+            causa      = _xe(item.get("causa", ""))
+            desc       = _xe(item.get("descricao", ""))
+            evidencia  = _xe(item.get("evidencia", ""))
+            kwh_est    = _xe(item.get("kwh_estimado", "—"))
+            imp_raw    = item.get("impacto", "Não identificado")
+            bg, fg, badge = _impact_colors(imp_raw)
+
+            # Coluna esquerda: badge de impacto + nome da causa
+            left_cell = [
+                Paragraph(
+                    f"<b><font color='white'> {badge} </font></b>",
+                    ParagraphStyle(
+                        "BadgeStyle", parent=styles["Normal"],
+                        fontSize=7, leading=10, alignment=TA_CENTER,
+                        textColor=colors.white, backColor=fg,
+                        borderPadding=(2, 4, 2, 4),
+                    ),
+                ),
+                Spacer(1, 0.1 * cm),
+                Paragraph(f"<b>{causa}</b>", ParagraphStyle(
+                    "CausaName", parent=styles["Normal"],
+                    fontSize=9, leading=12, alignment=TA_CENTER,
+                    textColor=NAVY,
+                )),
+            ]
+
+            # Coluna direita: diagnóstico + evidência + kWh estimado
+            right_lines = []
+            if desc:
+                right_lines.append(Paragraph(desc, styles["BodyLeft"]))
+            if evidencia:
+                right_lines.append(Paragraph(
+                    f"<i><font color='#{_HEX[\"steel\"]}'>Evidência: {evidencia}</font></i>",
+                    styles["Caption"],
+                ))
+            if kwh_est and kwh_est != "—":
+                kw_color = _HEX["red"] if kwh_est.lstrip().startswith("-") else _HEX["green"]
+                right_lines.append(Paragraph(
+                    f"<font color='#{kw_color}'><b>Impacto estimado: {kwh_est}</b></font>",
+                    ParagraphStyle(
+                        "KwhImpact", parent=styles["Normal"],
+                        fontSize=8, leading=11, alignment=TA_LEFT,
+                        spaceAfter=2,
+                    ),
+                ))
+
+            tbl = Table(
+                [[left_cell, right_lines]],
+                colWidths=[4.2 * cm, 12.0 * cm],
+            )
+            tbl.setStyle(TableStyle([
+                ("BACKGROUND",    (0, 0), (0, 0), bg),
+                ("BACKGROUND",    (1, 0), (1, 0), WHITE),
+                ("VALIGN",        (0, 0), (-1, -1), "MIDDLE"),
+                ("ALIGN",         (0, 0), (0, 0), "CENTER"),
+                ("ALIGN",         (1, 0), (1, 0), "LEFT"),
+                ("BOX",           (0, 0), (-1, -1), 0.5, SILVER),
+                ("LINEAFTER",     (0, 0), (0, -1), 0.5, SILVER),
+                ("TOPPADDING",    (0, 0), (-1, -1), 6),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+                ("LEFTPADDING",   (0, 0), (0, 0),  6),
+                ("RIGHTPADDING",  (0, 0), (0, 0),  6),
+                ("LEFTPADDING",   (1, 0), (1, 0),  8),
+                ("RIGHTPADDING",  (1, 0), (1, 0),  6),
+            ]))
+            story.append(KeepTogether([tbl, Spacer(1, 0.2 * cm)]))
+
     elif isinstance(causas, str):
         for line in causas.split("\n"):
             if line.strip():
