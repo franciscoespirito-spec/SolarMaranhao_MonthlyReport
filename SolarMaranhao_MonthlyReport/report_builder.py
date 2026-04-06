@@ -744,7 +744,7 @@ def build_report(kpis, analysis, charts, output_path):
     if isinstance(conclusao, str):
         for para in conclusao.split("\n"):
             if para.strip():
-                story.append(Paragraph(para.strip(), styles["ExecSummary"]))
+                story.append(Paragraph(_xe(para.strip()), styles["ExecSummary"]))
                 story.append(Spacer(1, 0.2 * cm))
 
     story.append(Spacer(1, 1.5 * cm))
