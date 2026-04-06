@@ -4,6 +4,7 @@ Design profissional estilo BIG4/McKinsey com ReportLab Platypus.
 """
 import os
 from datetime import date
+from xml.sax.saxutils import escape as _xe   # escapa &, <, > em texto dinâmico
 
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
