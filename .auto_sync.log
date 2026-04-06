@@ -1241,3 +1241,8 @@ To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
 To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
    8edd026..04d8239  main -> main
 [Mon Apr  6 21:11:22 UTC 2026] Sincronizado: auto: 2026-04-06 21:11:21 - MOVED_FROM kpi_calculator.py.tmp.34882.1775509854673
+[main ca02646] auto: 2026-04-06 21:11:25 - MOVED_TO kpi_calculator.py
+ 1 file changed, 5 insertions(+)
+To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
+   04d8239..ca02646  main -> main
+[Mon Apr  6 21:11:25 UTC 2026] Sincronizado: auto: 2026-04-06 21:11:25 - MOVED_TO kpi_calculator.py
