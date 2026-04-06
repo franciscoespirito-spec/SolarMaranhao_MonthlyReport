@@ -179,7 +179,7 @@ def calculate_all_kpis(monthly_totals_df, daily_df, target_year, target_month):
                 "daily_max": float(col.max()),
             }
 
-    # Impacto financeiro
+    # Impacto financeiro mensal
     financial = {}
     total_lost_revenue = 0.0
     for pid in PLANT_IDS:
@@ -196,6 +196,27 @@ def calculate_all_kpis(monthly_totals_df, daily_df, target_year, target_month):
         "non_generated_kwh": sum(financial[pid]["non_generated_kwh"] for pid in PLANT_IDS),
         "lost_revenue_brl": total_lost_revenue,
         "annualized_impact_brl": total_lost_revenue * 12,
+    }
+
+    # Impacto financeiro YTD (acumulado no ano até o mês alvo)
+    ytd_target_per_plant = TARGET_MONTHLY_KWH * target_month   # meta acumulada
+    financial_ytd = {}
+    for pid in PLANT_IDS:
+        ytd_gen = ytd[pid]
+        ytd_gap_kwh = ytd_gen - ytd_target_per_plant        # positivo = superou; negativo = abaixo
+        ytd_impact_brl = ytd_gap_kwh * KWH_TO_BRL           # positivo = receita extra; negativo = perda
+        financial_ytd[pid] = {
+            "ytd_generation":  ytd_gen,
+            "ytd_target":      ytd_target_per_plant,
+            "ytd_gap_kwh":     ytd_gap_kwh,
+            "ytd_impact_brl":  ytd_impact_brl,              # negativo = perda
+        }
+    total_ytd_impact = sum(financial_ytd[pid]["ytd_impact_brl"] for pid in PLANT_IDS)
+    financial_ytd["total"] = {
+        "ytd_generation": ytd["total"],
+        "ytd_target":     ytd_target_per_plant * len(PLANT_IDS),
+        "ytd_gap_kwh":    ytd["total"] - ytd_target_per_plant * len(PLANT_IDS),
+        "ytd_impact_brl": total_ytd_impact,
     }
 
     return {
