@@ -133,7 +133,7 @@ def calculate_all_kpis(monthly_totals_df, daily_df, target_year, target_month):
     else:
         projection = {pid: month_gen[pid] for pid in PLANT_IDS}
 
-    # Comparativo com mesmo mês do ano anterior
+    # Comparativo com mesmo mês do ano anterior (legado)
     yoy = {}
     prev_year = target_year - 1
     prev_row = monthly_totals_df[
@@ -151,6 +151,17 @@ def calculate_all_kpis(monthly_totals_df, daily_df, target_year, target_month):
             }
         else:
             yoy[pid] = {"previous": 0.0, "current": current_val, "change_percent": None}
+
+    # Comparativo multi-ano: 2 anos anteriores + atual (para tabela expandida)
+    yoy_multi = {}
+    for pid in PLANT_IDS:
+        yoy_multi[pid] = {}
+        for yr in [target_year - 2, target_year - 1, target_year]:
+            row = monthly_totals_df[
+                (monthly_totals_df["year"] == yr) &
+                (monthly_totals_df["month"] == target_month)
+            ]
+            yoy_multi[pid][yr] = float(row[pid].iloc[0]) if not row.empty else None
 
     # Disponibilidade por usina
     availability = {}
