@@ -97,6 +97,49 @@ systemctl start solar-autosync
 
 ---
 
+## Sincronização Automática da Planilha Excel (Google Drive)
+
+A planilha `Historico Geracao Solar Maranhao 2026.xlsx` é mantida no Google Drive compartilhado da empresa:
+- **Caminho no Drive:** `8 Geração Distribuída/15. Operação e Manutenção/`
+- **Remote rclone:** `gdrive` (requer autenticação OAuth configurada uma vez)
+
+Um timer systemd (`solar-sync-excel`) copia o arquivo do Drive para o servidor diariamente às **6h UTC** (antes do relatório das 8h).
+
+### Configurar autenticação Google Drive (apenas uma vez)
+
+```bash
+# Rodar no terminal do servidor (requer browser para OAuth)
+rclone config
+# → Nome: gdrive
+# → Tipo: drive
+# → Scope: drive.readonly
+# → Team Drive: sim (informar o ID do Drive compartilhado)
+# → Seguir o link OAuth, autorizar, colar o código
+```
+
+### Comandos de gerenciamento
+
+```bash
+# Ver status do timer
+systemctl status solar-sync-excel.timer
+
+# Executar sync manualmente agora
+bash /root/projetos/SolarMaranhao_MonthlyReport/sync_excel.sh
+
+# Ver log de sincronizações
+tail -f /root/projetos/SolarMaranhao_MonthlyReport/sync_excel.log
+
+# Testar acesso ao Drive (após configurar rclone)
+rclone ls "gdrive:8 Geração Distribuída/15. Operação e Manutenção"
+```
+
+### Arquivos do sync Excel
+- `/root/projetos/SolarMaranhao_MonthlyReport/sync_excel.sh` — script de sync
+- `/etc/systemd/system/solar-sync-excel.service` — serviço systemd
+- `/etc/systemd/system/solar-sync-excel.timer` — timer diário (6h UTC)
+
+---
+
 ## Estrutura do Projeto
 
 ```
