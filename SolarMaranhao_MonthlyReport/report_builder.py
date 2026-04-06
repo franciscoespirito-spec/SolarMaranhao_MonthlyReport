@@ -398,10 +398,10 @@ def build_report(kpis, analysis, charts, output_path):
     ))
 
     if charts.get("ranking"):
-        story.append(Image(charts["ranking"], width=16.6 * cm, height=7.0 * cm))
+        story.append(Image(charts["ranking"], width=16.6 * cm, height=6.5 * cm))
     story.append(Spacer(1, 0.3 * cm))
     if charts.get("daily_variation"):
-        story.append(Image(charts["daily_variation"], width=16.6 * cm, height=8.3 * cm))
+        story.append(Image(charts["daily_variation"], width=16.6 * cm, height=7.5 * cm))
     story.append(Spacer(1, 0.4 * cm))
 
     # Tabela multi-ano
