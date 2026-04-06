@@ -504,18 +504,22 @@ def build_report(kpis, analysis, charts, output_path):
         for item in causas:
             causa   = item.get("causa", "")
             desc    = item.get("descricao", "")
-            impacto = item.get("impacto", "")
-            imp_color = GREEN_DK if impacto.lower() in ("baixo", "não identificado") else \
-                        AMBER_DK if impacto.lower() == "médio" else RED_DK
-            story.append(KeepTogether([
-                Paragraph(
-                    f"<font color='#{imp_color.hexval()[2:]}'>●</font>  "
-                    f"<b>{causa}</b>  <font color='#{STEEL.hexval()[2:]}'>— Impacto: {impacto}</font>",
-                    styles["SubSectionTitle"]
-                ),
-                Paragraph(desc, styles["Body"]),
-                Spacer(1, 0.1 * cm),
-            ]))
+            impacto = item.get("impacto", "").lower()
+            if impacto in ("baixo", "não identificado", "nao identificado"):
+                dot_color = _HEX["green"]
+            elif "médio" in impacto or "medio" in impacto:
+                dot_color = _HEX["amber"]
+            else:
+                dot_color = _HEX["red"]
+            imp_label = item.get("impacto", "")
+            story.append(Paragraph(
+                f"<font color='#{dot_color}'>●</font>  "
+                f"<b>{causa}</b>  "
+                f"<font color='#{_HEX[\"steel\"]}'>— Impacto: {imp_label}</font>",
+                styles["SubSectionTitle"],
+            ))
+            story.append(Paragraph(desc, styles["Body"]))
+            story.append(Spacer(1, 0.15 * cm))
     elif isinstance(causas, str):
         for line in causas.split("\n"):
             if line.strip():
