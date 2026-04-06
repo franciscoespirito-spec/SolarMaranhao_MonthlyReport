@@ -541,9 +541,9 @@ def build_report(kpis, analysis, charts, output_path):
         risk_hdr = [["Risco", "Classificação", "Justificativa"]]
         for item in riscos:
             risk_hdr.append([
-                item.get("risco", ""),
-                item.get("classificacao", ""),
-                Paragraph(item.get("justificativa", ""), styles["Body"]),
+                _xe(item.get("risco", "")),
+                _xe(item.get("classificacao", "")),
+                Paragraph(_xe(item.get("justificativa", "")), styles["Body"]),
             ])
 
         risk_tbl = Table(risk_hdr, colWidths=[4.2*cm, 2.6*cm, 9.4*cm], repeatRows=1)
