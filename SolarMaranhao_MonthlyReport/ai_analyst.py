@@ -60,14 +60,22 @@ Gere as seguintes seções em formato JSON com as chaves indicadas:
 
 1. **"sumario_executivo"**: 3-4 frases com as principais conclusões do mês, incluindo destaque para riscos e performance geral.
 
-2. **"analise_causas"**: Análise separada por tipo de causa:
-   - Efeito clima (considerar estação chuvosa/seca do MA)
-   - Efeito sazonalidade
-   - Efeito degradação natural dos painéis
-   - Efeito operacional
-   - Efeito falha técnica (dias com geração zero)
-   - Efeito indisponibilidade de monitoramento
-   Cada causa deve ter: descrição da análise e impacto estimado (alto/médio/baixo/não identificado).
+2. **"analise_causas"**: Decomposição diagnóstica das variações de geração, separando EXATAMENTE os 6 efeitos abaixo — nessa ordem. Para cada efeito, faça um diagnóstico real com base nos dados fornecidos (não genérico). Quantifique o impacto em kWh quando possível. Use os dados de disponibilidade, histórico YoY e degradação para embasar cada causa.
+
+   Lista OBRIGATÓRIA (exatamente esses 6, nessa ordem):
+   1. "Efeito Clima" — variações de irradiação, nebulosidade, chuvas acima/abaixo do esperado para o período em Barreirinhas/MA. Citar se estação chuvosa (dez–mai) ou seca (jun–nov) e comparar com o esperado sazonalmente.
+   2. "Efeito Sazonalidade" — variação esperada do mês em relação à média anual histórica. Indicar se o mês é tipicamente forte ou fraco para o local.
+   3. "Efeito Degradação Natural" — usar os dados de degradação acumulada fornecidos (% e anos de operação por usina). Estimar a perda de geração em kWh atribuída à degradação no mês.
+   4. "Efeito Operacional" — avaliação de práticas de O&M: limpeza, sombreamento, estado dos inversores, manutenções preventivas. Basear-se em variações entre usinas e na dispersão de performance.
+   5. "Efeito Falha Técnica" — identificar usinas com dias de geração zero ou abaixo de 50% da média, indicar quantos dias afetados e estimar a perda em kWh.
+   6. "Efeito Indisponibilidade de Monitoramento/Medição" — avaliar se há usinas com dados ausentes, inconsistências de leitura ou gaps no histórico que possam distorcer o diagnóstico.
+
+   Cada causa deve retornar um objeto com:
+   - "causa": nome do efeito (exatamente como listado acima)
+   - "descricao": 2-4 frases de diagnóstico baseado nos dados reais, não genérico
+   - "impacto": "Alto" | "Médio" | "Baixo" | "Não identificado"
+   - "kwh_estimado": estimativa de kWh de desvio atribuído a essa causa (ex: "-1.800 kWh", "+500 kWh", "Não quantificável"); use sinal negativo para perda, positivo para ganho
+   - "evidencia": 1-2 frases citando o dado específico que embasa o diagnóstico (ex: "Usina X teve 4 dias com geração zero; Usina Y gerou 23% abaixo da média do portfólio")
 
 3. **"analise_riscos"**: Lista de riscos com classificação:
    - Risco de não atingir meta mensal
