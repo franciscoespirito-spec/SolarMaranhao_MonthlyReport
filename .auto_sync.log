@@ -2864,3 +2864,8 @@ To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
 To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
    6a1a4b5..771e335  main -> main
 [Mon Apr  6 22:47:18 UTC 2026] Sincronizado: auto: 2026-04-06 22:47:17 - MODIFY sync_excel.sh.tmp.40752.1775515630447
+[main 12095d1] auto: 2026-04-06 22:47:21 - MOVED_FROM sync_excel.sh.tmp.40752.1775515630447
+ 1 file changed, 6 insertions(+)
+To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
+   771e335..12095d1  main -> main
+[Mon Apr  6 22:47:21 UTC 2026] Sincronizado: auto: 2026-04-06 22:47:21 - MOVED_FROM sync_excel.sh.tmp.40752.1775515630447
