@@ -152,6 +152,22 @@ def calculate_all_kpis(monthly_totals_df, daily_df, target_year, target_month):
         else:
             yoy[pid] = {"previous": 0.0, "current": current_val, "change_percent": None}
 
+    # Disponibilidade por usina
+    availability = {}
+    if not daily_df.empty:
+        for pid in PLANT_IDS:
+            col = daily_df[pid]
+            days_with_gen = int((col > 0).sum())
+            zero_days = days_in_month - days_with_gen
+            availability[pid] = {
+                "days_with_gen": days_with_gen,
+                "zero_days": zero_days,
+                "availability_pct": days_with_gen / days_in_month * 100 if days_in_month > 0 else 0.0,
+                "daily_min": float(col[col > 0].min()) if days_with_gen > 0 else 0.0,
+                "daily_avg": float(col[col > 0].mean()) if days_with_gen > 0 else 0.0,
+                "daily_max": float(col.max()),
+            }
+
     # Impacto financeiro
     financial = {}
     total_lost_revenue = 0.0
