@@ -229,18 +229,18 @@ def build_report(kpis, analysis, charts, output_path):
     total_gap = (total_gen - total_target) / total_target * 100
     kpi_data.append([
         "TOTAL", f"{total_gen:,.0f}", f"{total_target:,.0f}",
-        f"{total_gap:+.1f}%", "-", "-", f"{total_ytd:,.0f}", "",
+        f"{total_gap:+.1f}%", "-", "-", "-", f"{total_ytd:,.0f}", "",
     ])
 
-    kpi_table = _make_table(kpi_data, col_widths=[2.2*cm, 1.8*cm, 1.8*cm, 1.5*cm, 1.3*cm, 1.8*cm, 2*cm, 1.5*cm])
+    kpi_table = _make_table(kpi_data, col_widths=[2.2*cm, 1.8*cm, 1.8*cm, 1.3*cm, 1.3*cm, 1.8*cm, 1.3*cm, 1.8*cm, 1.5*cm])
 
-    # Color status cells
+    # Color status cells (col 8 = Status)
     for i, pid in enumerate(PLANT_IDS):
         status = kpis["gap_vs_target"][pid]["status"]
         kpi_table.setStyle(TableStyle([
-            ("BACKGROUND", (7, i + 1), (7, i + 1), _status_color(status)),
-            ("TEXTCOLOR", (7, i + 1), (7, i + 1), WHITE),
-            ("FONTNAME", (7, i + 1), (7, i + 1), "Helvetica-Bold"),
+            ("BACKGROUND", (8, i + 1), (8, i + 1), _status_color(status)),
+            ("TEXTCOLOR", (8, i + 1), (8, i + 1), WHITE),
+            ("FONTNAME", (8, i + 1), (8, i + 1), "Helvetica-Bold"),
         ]))
     # Total row styling
     last_row = len(kpi_data) - 1
