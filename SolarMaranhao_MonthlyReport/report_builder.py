@@ -483,5 +483,5 @@ def build_report(kpis, analysis, charts, output_path):
     ))
 
     # Build
-    doc.build(story)
+    doc.build(story, onFirstPage=_add_page_footer, onLaterPages=_add_page_footer)
     return output_path
