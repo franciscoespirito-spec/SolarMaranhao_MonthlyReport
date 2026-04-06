@@ -512,10 +512,11 @@ def build_report(kpis, analysis, charts, output_path):
             else:
                 dot_color = _HEX["red"]
             imp_label = item.get("impacto", "")
+            steel_hex = _HEX["steel"]
             story.append(Paragraph(
                 f"<font color='#{dot_color}'>●</font>  "
                 f"<b>{causa}</b>  "
-                f"<font color='#{_HEX[\"steel\"]}'>— Impacto: {imp_label}</font>",
+                f"<font color='#{steel_hex}'>— Impacto: {imp_label}</font>",
                 styles["SubSectionTitle"],
             ))
             story.append(Paragraph(desc, styles["Body"]))
