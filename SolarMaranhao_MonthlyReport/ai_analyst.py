@@ -93,7 +93,7 @@ Responda SOMENTE com o JSON válido, sem markdown ou texto adicional."""
     try:
         response = client.messages.create(
             model="claude-sonnet-4-6",
-            max_tokens=4000,
+            max_tokens=8000,
             system=SYSTEM_PROMPT,
             messages=[{"role": "user", "content": prompt}],
         )
