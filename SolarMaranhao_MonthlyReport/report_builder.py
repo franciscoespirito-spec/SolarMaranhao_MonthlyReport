@@ -15,8 +15,8 @@ from reportlab.platypus import (
     Image, PageBreak, KeepTogether, HRFlowable,
 )
 from reportlab.lib.colors import HexColor
+from reportlab.pdfgen import canvas as pdfgen_canvas
 
-from reportlab.lib.units import cm, mm
 from config import PLANTS, PLANT_IDS, TARGET_MONTHLY_KWH, WEATHER_STATION, KWH_TO_BRL
 
 MESES_PT_FULL = {
