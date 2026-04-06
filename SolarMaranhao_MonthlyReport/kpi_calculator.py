@@ -239,8 +239,10 @@ def calculate_all_kpis(monthly_totals_df, daily_df, target_year, target_month):
         "estimated_losses": estimated_losses,
         "projection": projection,
         "yoy_comparison": yoy,
-        "financial": financial,
-        "availability": availability,
+        "financial":     financial,
+        "financial_ytd": financial_ytd,
+        "availability":  availability,
+        "yoy_multi":     yoy_multi,
     }
 
 
