@@ -162,6 +162,22 @@ def _build_data_summary(kpis, monthly_totals_df=None):
     lines.append(f"- TOTAL: Receita perdida: R$ {fin_total['lost_revenue_brl']:,.0f} | "
                  f"Impacto anualizado: R$ {fin_total['annualized_impact_brl']:,.0f}")
 
+    # Disponibilidade e dados diários
+    if monthly_totals_df is not None:
+        availability = kpis.get("availability", {})
+        if availability:
+            lines.append("\n### Disponibilidade (dias com geração > 0):")
+            for pid in PLANT_IDS:
+                av = availability.get(pid, {})
+                lines.append(
+                    f"- {PLANTS[pid]['name']}: {av.get('days_with_gen', '-')}/{kpis['days_in_month']} dias "
+                    f"({av.get('availability_pct', 0):.1f}%) | "
+                    f"Dias zero: {av.get('zero_days', '-')} | "
+                    f"Geração diária: min={av.get('daily_min', 0):,.0f} / "
+                    f"avg={av.get('daily_avg', 0):,.0f} / "
+                    f"max={av.get('daily_max', 0):,.0f} kWh"
+                )
+
     # Histórico mensal se disponível
     if monthly_totals_df is not None and not monthly_totals_df.empty:
         lines.append("\n### Histórico mensal (últimos 6 meses com dados):")
