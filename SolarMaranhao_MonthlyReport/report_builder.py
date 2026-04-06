@@ -489,7 +489,7 @@ def build_report(kpis, analysis, charts, output_path):
     story.append(Spacer(1, 0.4 * cm))
 
     if charts.get("yoy_comparison"):
-        story.append(Image(charts["yoy_comparison"], width=16.6 * cm, height=8.3 * cm))
+        story.append(Image(charts["yoy_comparison"], width=16.6 * cm, height=7.8 * cm))
     story.append(PageBreak())
 
     # ═══════════════════════════════════════════════════════════
