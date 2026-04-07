@@ -27,11 +27,11 @@ def send_report_email(pdf_path, year, month):
         raise ValueError("GMAIL_APP_PASSWORD não configurada. Execute: export GMAIL_APP_PASSWORD='sua senha'")
 
     month_name = MESES_PT_FULL.get(month, str(month))
-    subject = f"Relatório Mensal de Geração Solar – {month_name}/{year}"
+    subject = f"Relatório de Geração Solar – {month_name}/{year}"
 
-    body = f"""Prezado(a),
+    body = f"""Bom dia pessoal,
 
-Segue em anexo o Relatório Mensal de Geração Solar referente a {month_name}/{year}.
+Segue o relatório do mês {month_name}/{year}.
 
 O relatório contém:
 • Sumário executivo e informações das usinas
@@ -41,8 +41,6 @@ O relatório contém:
 • Análise de riscos e plano de ação
 • Impacto financeiro estimado
 • Conclusão executiva com recomendações
-
-Este relatório é gerado automaticamente no 1° dia útil de cada mês.
 
 Atenciosamente,
 Sistema de Monitoramento Solar – Maranhão
