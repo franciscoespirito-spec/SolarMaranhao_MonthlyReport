@@ -13817,3 +13817,8 @@ To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
 To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
    1342e6b..3a3c60e  main -> main
 [Tue Apr  7 03:23:27 UTC 2026] Sincronizado: auto: 2026-04-07 03:23:26 - MOVED_FROM excel_handler.py.tmp.74867.1775529905083
+[main f225803] auto: 2026-04-07 03:23:30 - MOVED_TO excel_handler.py
+ 1 file changed, 5 insertions(+)
+To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
+   3a3c60e..f225803  main -> main
+[Tue Apr  7 03:23:31 UTC 2026] Sincronizado: auto: 2026-04-07 03:23:30 - MOVED_TO excel_handler.py
