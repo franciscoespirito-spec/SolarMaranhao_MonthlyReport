@@ -19,19 +19,13 @@ echo "[$(date '+%Y-%m-%d %H:%M:%S')] === Iniciando geração do relatório diár
 
 cd "$PROJ"
 
-# Detecta o mês mais recente com dados na planilha
+# Sempre usa o mês anterior consolidado (mês corrente ainda não está encerrado)
 TARGET=$(python3 - <<'EOF'
-from data_loader import load_workbook, load_all_monthly_totals
-wb = load_workbook()
-df = load_all_monthly_totals(wb)
-nonzero = df[df["total"] > 0]
-if nonzero.empty:
-    import datetime
-    d = datetime.date.today()
-    print(f"{d.year}-{d.month:02d}")
-else:
-    last = nonzero.iloc[-1]
-    print(f"{int(last['year'])}-{int(last['month']):02d}")
+import datetime
+today = datetime.date.today()
+first_of_month = today.replace(day=1)
+prev = first_of_month - datetime.timedelta(days=1)
+print(f"{prev.year}-{prev.month:02d}")
 EOF
 )
 
