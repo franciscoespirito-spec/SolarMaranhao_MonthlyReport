@@ -177,9 +177,36 @@ python3 main.py --month 2026-03 --no-email
 python3 main.py --dry-run
 ```
 
-## Agendamento automático
+## Relatório Diário Automático
 
-O relatório é gerado automaticamente no 1° dia útil de cada mês via agente remoto Claude Code.
+Um relatório PDF é gerado e enviado por email **todo dia às 08h BRT (11h UTC)** para `francisco.espirito@gmail.com`.
+
+- Detecta automaticamente o mês com dados mais recentes na planilha
+- Corpo do email: "Bom dia pessoal, Segue o relatório do mês {mês}/{ano}"
+- Log em: `/root/projetos/SolarMaranhao_MonthlyReport/daily_report.log`
+
+```bash
+# Status do timer
+systemctl status solar-daily-report.timer
+
+# Executar manualmente agora
+bash /root/projetos/SolarMaranhao_MonthlyReport/daily_report.sh
+
+# Ver log
+tail -f /root/projetos/SolarMaranhao_MonthlyReport/daily_report.log
+```
+
+**Arquivos:**
+- `/root/projetos/SolarMaranhao_MonthlyReport/daily_report.sh` — script principal
+- `/etc/systemd/system/solar-daily-report.service` — serviço systemd
+- `/etc/systemd/system/solar-daily-report.timer` — timer diário 11h UTC
+- `/root/.env_solar` — variáveis de ambiente (ANTHROPIC_API_KEY, GMAIL_*)
+
+---
+
+## Agendamento automático (legado — 1° dia útil do mês)
+
+O relatório também é gerado no 1° dia útil de cada mês via agente remoto Claude Code.
 
 - **ID do trigger:** `trig_01NBYjrkW17pLVH3YBgRM9d4`
 - **Cron:** `0 8 1-3 * *` (dias 1-3 de cada mês às 8h UTC — o agente verifica se é dia útil)
