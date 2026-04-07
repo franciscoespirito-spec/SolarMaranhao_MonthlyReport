@@ -3,3 +3,10 @@
 2026/04/06 22:48:02 CRITICAL: Failed to create file system for "gdrive:8 Geração Distribuída/15. Operação e Manutenção/Historico Geracao Solar Maranhao 2026.xlsx": didn't find section in config file ("gdrive")
 [2026-04-06 22:48:02] ERRO na sincronização (exit code 1).
 [2026-04-07 00:03:43] Iniciando sincronização do Excel...
+2026/04/07 00:03:58 INFO  : Historico Geracao Solar Maranhao 2026.xlsx: Copied (replaced existing)
+2026/04/07 00:03:58 INFO  : 
+Transferred:   	    2.110 MiB / 2.110 MiB, 100%, 2.153 KiB/s, ETA 0s
+Transferred:            1 / 1, 100%
+Elapsed time:        13.2s
+
+[2026-04-07 00:03:58] Sincronização concluída com sucesso.
