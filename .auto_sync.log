@@ -4112,3 +4112,8 @@ To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
 To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
    d65ac33..129371d  main -> main
 [Tue Apr  7 01:07:34 UTC 2026] Sincronizado: auto: 2026-04-07 01:07:33 - MOVED_FROM email_sender.py.tmp.40752.1775524043150
+[main 92fbd8a] auto: 2026-04-07 01:07:37 - MOVED_TO email_sender.py
+ 1 file changed, 5 insertions(+)
+To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
+   129371d..92fbd8a  main -> main
+[Tue Apr  7 01:07:38 UTC 2026] Sincronizado: auto: 2026-04-07 01:07:37 - MOVED_TO email_sender.py
