@@ -3901,3 +3901,9 @@ Everything up-to-date
 To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
    e304cbe..3487bcb  main -> main
 [Tue Apr  7 00:46:36 UTC 2026] Sincronizado: auto: 2026-04-07 00:46:35 - DELETE,ISDIR nome-do-repositorio
+[main 42c0a0d] auto: 2026-04-07 00:46:43 - CREATE,ISDIR GeracaoUsinasEmailv2
+ 2 files changed, 6 insertions(+)
+ create mode 160000 GeracaoUsinasEmailv2
+To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
+   3487bcb..42c0a0d  main -> main
+[Tue Apr  7 00:46:44 UTC 2026] Sincronizado: auto: 2026-04-07 00:46:43 - CREATE,ISDIR GeracaoUsinasEmailv2
