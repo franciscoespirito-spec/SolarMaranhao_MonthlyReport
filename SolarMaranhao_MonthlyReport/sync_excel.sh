@@ -2,7 +2,7 @@
 # Sincroniza a planilha do Google Drive compartilhado para o servidor.
 # Executado diariamente às 6h UTC pelo timer solar-sync-excel.timer.
 
-REMOTE="gdrive:8 Geração Distribuída/15. Operação e Manutenção"
+REMOTE="gdrive1:15. Operação e Manutenção"
 LOCAL="/root/projetos/SolarMaranhao_MonthlyReport"
 FILE="Historico Geracao Solar Maranhao 2026.xlsx"
 LOG="$LOCAL/sync_excel.log"
