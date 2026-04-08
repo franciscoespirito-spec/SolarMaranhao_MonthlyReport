@@ -33,3 +33,10 @@ Elapsed time:         2.4s
 
 [2026-04-07 06:00:29] Sincronização concluída com sucesso.
 [2026-04-08 06:00:01] Iniciando sincronização do Excel...
+2026/04/08 06:00:44 INFO  : Historico Geracao Solar Maranhao 2026.xlsx: Copied (replaced existing)
+2026/04/08 06:00:44 INFO  : 
+Transferred:   	    1.424 MiB / 1.424 MiB, 100%, 0 B/s, ETA -
+Transferred:            1 / 1, 100%
+Elapsed time:         4.4s
+
+[2026-04-08 06:00:44] Sincronização concluída com sucesso.
