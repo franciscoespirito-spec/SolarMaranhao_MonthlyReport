@@ -28170,3 +28170,8 @@ To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
 To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
    0c6b5b5..e66917a  main -> main
 [Fri Apr 10 04:22:36 UTC 2026] Sincronizado: auto: 2026-04-10 04:22:35 - MODIFY Histórico Geração Solar Maranhão 2026.xlsx.tmp
+[main 0af6811] auto: 2026-04-10 04:22:39 - MOVED_FROM Histórico Geração Solar Maranhão 2026.xlsx.tmp
+ 1 file changed, 5 insertions(+)
+To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
+   e66917a..0af6811  main -> main
+[Fri Apr 10 04:22:40 UTC 2026] Sincronizado: auto: 2026-04-10 04:22:39 - MOVED_FROM Histórico Geração Solar Maranhão 2026.xlsx.tmp
