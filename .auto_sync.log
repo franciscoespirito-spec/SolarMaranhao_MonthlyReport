@@ -37849,3 +37849,9 @@ To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
 To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
    3e46923e..69309c39  main -> main
 [Fri Apr 10 12:18:32 UTC 2026] Sincronizado: auto: 2026-04-10 12:18:31 - MODIFY run_2026-04-10.log
+[main 21bd7931] auto: 2026-04-10 20:09:12 - MOVED_FROM,ISDIR GeracaoUsinasEmailv2
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+ delete mode 160000 GeracaoUsinasEmailv2
+To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
+   69309c39..21bd7931  main -> main
+[Fri Apr 10 20:09:14 UTC 2026] Sincronizado: auto: 2026-04-10 20:09:12 - MOVED_FROM,ISDIR GeracaoUsinasEmailv2
