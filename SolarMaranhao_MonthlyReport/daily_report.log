@@ -305,3 +305,25 @@ Relatório concluído: output/Relatorio_Solar_Maranhao_2026_03.pdf
 [2026-04-17 11:00:29] === Concluído ===
 [2026-04-18 11:00:15] === Iniciando geração do relatório diário ===
 [2026-04-18 11:00:16] Mês detectado: 2026-03
+=== Relatório Mensal de Geração Solar ===
+Período: Março/2026
+
+[1/6] Carregando dados do Excel...
+  - 48 meses de dados históricos carregados
+  - 31 dias de dados diários para Março/2026
+[2/6] Calculando KPIs...
+  - Geração total: 59,675 kWh (85.3% da meta)
+  - Ranking: Usina 2 > Usina 6 > Usina 5 > Usina 1 > Usina 3
+  - Impacto financeiro: R$ 10,325
+[3/6] Gerando gráficos...
+  - 6 gráficos gerados
+[4/6] Gerando análises (Claude AI)...
+Aviso: Falha na API Claude (Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CaB7yCFjiDDH9ZYbHva8g'}). Usando análise padrão.
+  - Análises geradas via Claude API
+[5/6] Montando relatório PDF...
+  - PDF salvo: output/Relatorio_Solar_Maranhao_2026_03.pdf
+[6/6] Enviando email...
+  - Email enviado para francisco.espirito@gmail.com
+
+Relatório concluído: output/Relatorio_Solar_Maranhao_2026_03.pdf
+[2026-04-18 11:00:35] === Concluído ===
