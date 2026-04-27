@@ -41557,3 +41557,8 @@ To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
 To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
    10f99d21..e838fd6f  main -> main
 [Mon Apr 27 11:02:36 UTC 2026] Sincronizado: auto: 2026-04-27 11:02:35 - MODIFY daily_variation.png
+[main 13bcf4df] auto: 2026-04-27 11:02:39 - MODIFY yoy_comparison.png
+ 1 file changed, 5 insertions(+)
+To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
+   e838fd6f..13bcf4df  main -> main
+[Mon Apr 27 11:02:40 UTC 2026] Sincronizado: auto: 2026-04-27 11:02:39 - MODIFY yoy_comparison.png
