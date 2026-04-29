@@ -591,3 +591,5 @@ Aviso: Falha na API Claude (Error code: 400 - {'type': 'error', 'error': {'type'
 
 Relatório concluído: output/Relatorio_Solar_Maranhao_2026_03.pdf
 [2026-04-28 11:01:01] === Concluído ===
+[2026-04-29 11:00:45] === Iniciando geração do relatório diário ===
+[2026-04-29 11:00:45] Mês detectado: 2026-03
