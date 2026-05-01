@@ -409,3 +409,7 @@ Elapsed time:         1.1s
 2026/04/30 15:39:31 NOTICE: Failed to copy: directory not found
 [2026-04-30 15:39:31] ERRO na sincronização (exit code 3).
 [2026-05-01 06:00:00] Iniciando sincronização do Excel...
+2026/05/01 06:00:04 ERROR : Google drive root '15. Operação e Manutenção/Historico Geracao Solar Maranhao 2026.xlsx': error reading source root directory: directory not found
+2026/05/01 06:00:04 ERROR : Attempt 1/3 failed with 1 errors and: directory not found
+2026/05/01 06:00:04 ERROR : Google drive root '15. Operação e Manutenção/Historico Geracao Solar Maranhao 2026.xlsx': error reading source root directory: directory not found
+2026/05/01 06:00:04 ERROR : Attempt 2/3 failed with 1 errors and: directory not found
