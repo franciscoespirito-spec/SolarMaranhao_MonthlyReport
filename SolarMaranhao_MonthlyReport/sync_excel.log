@@ -423,3 +423,4 @@ Elapsed time:        34.5s
 
 2026/05/01 06:00:38 NOTICE: Failed to copy: directory not found
 [2026-05-01 06:00:38] ERRO na sincronização (exit code 3).
+[2026-05-02 06:00:00] Iniciando sincronização do Excel...
