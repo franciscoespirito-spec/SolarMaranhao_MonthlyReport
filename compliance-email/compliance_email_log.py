@@ -28,8 +28,8 @@ SERVICE_ACCOUNT_FILE = "/root/projetos/compliance-email/credentials/service_acco
 DELEGATED_USER       = "francisco.santo@beng.eng.br"
 COMPLIANCE_EMAIL     = "compliance@beng.eng.br"
 DRIVE_FOLDER_ID      = "1Uh6znuDlVWigCnOjoZEeQVVIojjqWjZy"
-LOG_FILE             = "/root/logs/compliance_email_log.log"
-DOWNLOAD_DIR         = "/root/logs"
+LOG_FILE             = "/root/projetos/compliance-email/logs/compliance_email_log.log"
+DOWNLOAD_DIR         = "/root/projetos/compliance-email/logs"
 
 DRIVE_SCOPES = ["https://www.googleapis.com/auth/drive"]
 GMAIL_SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
