@@ -1443,3 +1443,6 @@ Execute no terminal do VS Code (VPS):
 2026-05-04 22:08:23,271 [INFO] file_cache is only supported with oauth2client<4.0.0
 2026-05-04 22:08:26,427 [INFO]   Página 1: 1000 atividades (total acumulado: 1000)
 2026-05-04 22:08:28,228 [INFO]   Página 2: 1000 atividades (total acumulado: 2000)
+2026-05-04 22:08:30,195 [INFO]   Página 3: 1000 atividades (total acumulado: 3000)
+2026-05-04 22:08:31,390 [INFO]   Página 4: 1000 atividades (total acumulado: 4000)
+2026-05-04 22:08:33,381 [INFO]   Página 5: 1000 atividades (total acumulado: 5000)
