@@ -44067,3 +44067,46 @@ hint: the same ref. If you want to integrate the remote changes, use
 hint: 'git pull' before pushing again.
 hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 [Mon May  4 21:42:11 UTC 2026] Sincronizado: auto: 2026-05-04 21:42:10 - MOVED_TO compliance_email_log.py
+[main 830cc0ad] auto: 2026-05-04 21:42:14 - MOVED_TO save_session.py
+ 33 files changed, 26 insertions(+)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/.gitkeep (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/.mcp.json (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/Historico Geracao Solar Maranhao 2026.xlsx (100%)
+ rename "SolarMaranhao_MonthlyReport/Infroma\303\247\303\265es adicionais.pdf" => "solar-maranhao/Infroma\303\247\303\265es adicionais.pdf" (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/__pycache__/ai_analyst.cpython-312.pyc (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/__pycache__/chart_generator.cpython-312.pyc (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/__pycache__/config.cpython-312.pyc (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/__pycache__/data_loader.cpython-312.pyc (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/__pycache__/email_sender.cpython-312.pyc (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/__pycache__/kpi_calculator.cpython-312.pyc (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/__pycache__/report_builder.cpython-312.pyc (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/ai_analyst.py (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/chart_generator.py (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/config.py (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/daily_report.log (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/daily_report.sh (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/data_loader.py (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/email_sender.py (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/kpi_calculator.py (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/main.py (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/output/Relatorio_Solar_Maranhao_2026_03.pdf (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/output/Relatorio_Solar_Maranhao_2026_04.pdf (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/output/cover_image.png (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/output/daily_variation.png (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/output/monthly_generation.png (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/output/ranking.png (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/output/yoy_comparison.png (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/output/ytd_trend.png (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/report_builder.py (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/requirements.txt (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/sync_excel.log (100%)
+ rename {SolarMaranhao_MonthlyReport => solar-maranhao}/sync_excel.sh (100%)
+To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
+ ! [rejected]          main -> main (fetch first)
+error: failed to push some refs to 'https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+[Mon May  4 21:42:15 UTC 2026] Sincronizado: auto: 2026-05-04 21:42:14 - MOVED_TO save_session.py
