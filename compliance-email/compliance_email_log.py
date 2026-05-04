@@ -35,7 +35,7 @@ DRIVE_SCOPES = ["https://www.googleapis.com/auth/drive"]
 GMAIL_SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
 
 # ── Logging ───────────────────────────────────────────────────────────────────
-os.makedirs("/root/logs", exist_ok=True)
+os.makedirs("/root/projetos/compliance-email/logs", exist_ok=True)
 logging.basicConfig(
     filename=LOG_FILE,
     level=logging.INFO,
