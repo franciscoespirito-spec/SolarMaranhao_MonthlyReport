@@ -44332,3 +44332,14 @@ hint: the same ref. If you want to integrate the remote changes, use
 hint: 'git pull' before pushing again.
 hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 [Mon May  4 21:43:26 UTC 2026] Sincronizado: auto: 2026-05-04 21:43:25 - MOVED_FROM,ISDIR SolarMaranhao_MonthlyReport
+[main 3b78fd8e] auto: 2026-05-04 21:43:29 - MOVED_TO,ISDIR solar-maranhao
+ 1 file changed, 11 insertions(+)
+To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
+ ! [rejected]          main -> main (fetch first)
+error: failed to push some refs to 'https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+[Mon May  4 21:43:29 UTC 2026] Sincronizado: auto: 2026-05-04 21:43:29 - MOVED_TO,ISDIR solar-maranhao
