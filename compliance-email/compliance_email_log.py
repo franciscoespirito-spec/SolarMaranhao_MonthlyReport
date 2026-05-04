@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Rotina Mensal - Pesquisa de Logs de Compliance
-Usa a Gmail API para listar e-mails recebidos por compliance@beng.eng.br.
-Captura TODOS os e-mails recebidos no mês (ISO 37301).
+Rotina Mensal - Log de E-mails de Compliance
+Usa Admin SDK Reports API para listar e-mails recebidos por compliance@beng.eng.br.
+Mesma fonte de dados do Google Admin Console > Relatórios > Pesquisa de logs de e-mail.
 
 Uso normal (mês corrente):
     python3 compliance_email_log.py
@@ -31,8 +31,8 @@ DRIVE_FOLDER_ID      = "1Uh6znuDlVWigCnOjoZEeQVVIojjqWjZy"
 LOG_FILE             = "/root/projetos/compliance-email/logs/compliance_email_log.log"
 DOWNLOAD_DIR         = "/root/projetos/compliance-email/logs"
 
+ADMIN_SCOPES = ["https://www.googleapis.com/auth/admin.reports.audit.readonly"]
 DRIVE_SCOPES = ["https://www.googleapis.com/auth/drive"]
-GMAIL_SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 os.makedirs("/root/projetos/compliance-email/logs", exist_ok=True)
@@ -45,7 +45,6 @@ log = logging.getLogger()
 
 
 def get_period(year=None, month=None):
-    """Retorna datas de início e fim do mês."""
     if year and month:
         ref = date(year, month, 1)
     else:
@@ -59,70 +58,142 @@ def get_period(year=None, month=None):
     return first_day, last_day, start_time, end_time
 
 
+def parse_params(parameters):
+    """Converte lista de parâmetros da API em dicionário."""
+    result = {}
+    for p in parameters:
+        name = p.get("name")
+        if "value" in p:
+            result[name] = p["value"]
+        elif "multiValue" in p:
+            result[name] = p["multiValue"]
+        elif "intValue" in p:
+            result[name] = p["intValue"]
+        elif "boolValue" in p:
+            result[name] = p["boolValue"]
+    return result
+
+
+def map_status(smtp_code, event_info):
+    """Mapeia código SMTP e event_info para status em português."""
+    code = str(smtp_code or "")
+    info = str(event_info or "").upper()
+
+    if code.startswith("2") or info == "DELIVERED":
+        return "Entregue"
+    elif code.startswith("5") or info in ("REJECTED", "BOUNCE"):
+        return "Rejeitado"
+    elif code.startswith("4"):
+        return "Bloqueado"
+    else:
+        return info if info else "Desconhecido"
+
+
+STATUS_PRIORITY = {"Entregue": 3, "Rejeitado": 2, "Bloqueado": 1, "Desconhecido": 0}
+
+
 def fetch_email_logs(year: int, month: int, dest_path: str) -> int:
     """
-    Lista e-mails recebidos por compliance@beng.eng.br via Gmail API.
-    Retorna o número de mensagens encontradas.
+    Consulta Admin SDK Reports API para obter e-mails recebidos por compliance@.
+    Retorna o número de mensagens únicas encontradas.
     """
-    first_day, last_day, _, _ = get_period(year, month)
-    after  = first_day.strftime("%Y/%m/%d")
-    before = (last_day + timedelta(days=1)).strftime("%Y/%m/%d")
-    query  = f"after:{after} before:{before}"
-    log.info(f"Gmail API: query={query}")
+    first_day, last_day, start_time, end_time = get_period(year, month)
+    log.info(f"Admin SDK Reports API: período {first_day} a {last_day}")
+    log.info(f"  startTime={start_time}  endTime={end_time}")
 
     creds = service_account.Credentials.from_service_account_file(
-        SERVICE_ACCOUNT_FILE, scopes=GMAIL_SCOPES
-    ).with_subject(COMPLIANCE_EMAIL)
-    service = build("gmail", "v1", credentials=creds)
+        SERVICE_ACCOUNT_FILE, scopes=ADMIN_SCOPES
+    ).with_subject(DELEGATED_USER)
+    service = build("admin", "reports_v1", credentials=creds)
 
-    # Listar IDs de todas as mensagens do período
-    msg_ids = []
+    # Buscar todas as atividades de Gmail do domínio no período
+    activities = []
     page_token = None
+    page = 0
     while True:
-        resp = service.users().messages().list(
-            userId=COMPLIANCE_EMAIL,
-            q=query,
-            maxResults=500,
+        page += 1
+        resp = service.activities().list(
+            userKey="all",
+            applicationName="gmail",
+            startTime=start_time,
+            endTime=end_time,
+            maxResults=1000,
             pageToken=page_token,
         ).execute()
-        msg_ids.extend(resp.get("messages", []))
+
+        batch = resp.get("items", [])
+        activities.extend(batch)
+        log.info(f"  Página {page}: {len(batch)} atividades (total acumulado: {len(activities)})")
+
         page_token = resp.get("nextPageToken")
         if not page_token:
             break
-    log.info(f"Total de mensagens encontradas: {len(msg_ids)}")
 
-    # Buscar metadados de cada mensagem
-    rows = []
-    for msg in msg_ids:
-        detail = service.users().messages().get(
-            userId=COMPLIANCE_EMAIL,
-            id=msg["id"],
-            format="metadata",
-            metadataHeaders=["From", "To", "Subject", "Date"],
-        ).execute()
-        headers = {h["name"]: h["value"]
-                   for h in detail.get("payload", {}).get("headers", [])}
-        rows.append({
-            "timestamp":  headers.get("Date", ""),
-            "from":       headers.get("From", ""),
-            "to":         headers.get("To", ""),
-            "subject":    headers.get("Subject", ""),
-            "message_id": msg["id"],
-        })
+    log.info(f"Total de atividades brutas do domínio: {len(activities)}")
+
+    # Filtrar e processar apenas e-mails recebidos por compliance@
+    messages = {}  # message_id → melhor evento
+
+    for activity in activities:
+        id_time = activity.get("id", {}).get("time", "")
+        for event in activity.get("events", []):
+            params = parse_params(event.get("parameters", []))
+
+            # Filtrar direção RECEIVED
+            direction = str(params.get("message_direction", "")).upper()
+            if direction != "RECEIVED":
+                continue
+
+            # Filtrar destinatário compliance@beng.eng.br
+            envelope_to = params.get("envelope_to", [])
+            if isinstance(envelope_to, str):
+                envelope_to = [envelope_to]
+            recipients = [r.lower() for r in envelope_to]
+            if COMPLIANCE_EMAIL.lower() not in recipients:
+                continue
+
+            msg_id   = params.get("message_id", "")
+            sender   = params.get("envelope_from", "")
+            subject  = params.get("subject", "")
+            smtp_code = params.get("smtp_reply_code", "")
+            event_info = params.get("event_info", "")
+            status   = map_status(smtp_code, event_info)
+
+            # Manter o evento de maior prioridade de status por message_id
+            existing = messages.get(msg_id)
+            if existing is None or STATUS_PRIORITY.get(status, 0) > STATUS_PRIORITY.get(existing["status"], 0):
+                messages[msg_id] = {
+                    "data":     id_time,
+                    "remetente": sender,
+                    "assunto":  subject,
+                    "status":   status,
+                }
+
+    log.info(f"E-mails únicos recebidos por {COMPLIANCE_EMAIL}: {len(messages)}")
+
+    # Ordenar por data
+    rows = sorted(messages.values(), key=lambda r: r["data"])
+
+    # Formatar data para leitura humana
+    for row in rows:
+        try:
+            dt = datetime.fromisoformat(row["data"].replace("Z", "+00:00"))
+            row["data"] = dt.strftime("%Y-%m-%d %H:%M:%S")
+        except Exception:
+            pass
 
     # Salvar CSV
-    fieldnames = ["timestamp", "from", "to", "subject", "message_id"]
+    fieldnames = ["data", "remetente", "assunto", "status"]
     with open(dest_path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
 
-    log.info(f"Gmail API: {len(rows)} mensagens salvas em {dest_path}")
+    log.info(f"CSV salvo: {dest_path} ({len(rows)} linhas)")
     return len(rows)
 
 
 def upload_to_drive(drive_service, csv_path, filename):
-    """Faz upload do CSV para a pasta do Drive."""
     file_metadata = {
         "name": filename,
         "parents": [DRIVE_FOLDER_ID],
@@ -140,7 +211,7 @@ def upload_to_drive(drive_service, csv_path, filename):
 
 def main():
     log.info("=" * 60)
-    log.info("Iniciando rotina de compliance email log (Gmail API)")
+    log.info("Iniciando rotina de compliance email log (Admin SDK Reports API)")
 
     year  = int(sys.argv[1]) if len(sys.argv) > 1 else None
     month = int(sys.argv[2]) if len(sys.argv) > 2 else None
@@ -158,7 +229,7 @@ def main():
 
     if total == 0:
         log.info("Nenhuma mensagem encontrada no período.")
-        print("AVISO: Nenhum e-mail encontrado no período.")
+        print("AVISO: Nenhum e-mail encontrado para compliance@ no período.")
 
     drive_creds = service_account.Credentials.from_service_account_file(
         SERVICE_ACCOUNT_FILE, scopes=DRIVE_SCOPES
@@ -167,7 +238,7 @@ def main():
     upload_to_drive(drive_service, csv_path, csv_filename)
 
     log.info("Rotina concluída com sucesso.")
-    print(f"OK: {total} registros exportados → Drive: {csv_filename}")
+    print(f"OK: {total} e-mails exportados → Drive: {csv_filename}")
 
 
 if __name__ == "__main__":
