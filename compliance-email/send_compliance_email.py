@@ -4,7 +4,7 @@ import requests
 from datetime import datetime
 from pathlib import Path
 
-log_file = Path("/root/logs/email_test.log")
+log_file = Path("/root/projetos/compliance-email/logs/email_test.log")
 log_file.parent.mkdir(exist_ok=True)
 
 def log_msg(msg):
