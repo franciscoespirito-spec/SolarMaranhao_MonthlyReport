@@ -24,7 +24,7 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
 # ── Configurações ─────────────────────────────────────────────────────────────
-SERVICE_ACCOUNT_FILE = "/root/scripts/credentials/service_account.json"
+SERVICE_ACCOUNT_FILE = "/root/projetos/compliance-email/credentials/service_account.json"
 DELEGATED_USER       = "francisco.santo@beng.eng.br"
 COMPLIANCE_EMAIL     = "compliance@beng.eng.br"
 DRIVE_FOLDER_ID      = "1Uh6znuDlVWigCnOjoZEeQVVIojjqWjZy"
