@@ -1469,3 +1469,5 @@ Execute no terminal do VS Code (VPS):
 2026-05-04 22:09:02,755 [INFO] CSV salvo: /root/projetos/compliance-email/logs/compliance_logs_2026-05-04_22-08-23.csv (0 linhas)
 2026-05-04 22:09:03,066 [INFO] Nenhuma mensagem encontrada no período.
 2026-05-04 22:09:03,164 [INFO] file_cache is only supported with oauth2client<4.0.0
+2026-05-04 22:09:07,437 [INFO] Upload concluído: compliance_logs_2026-05-04_22-08-23.csv (ID: 1EHpemn_TX76-VqdI0IW6975mu9rnE-0P)
+2026-05-04 22:09:07,438 [INFO] Rotina concluída com sucesso.
