@@ -441,3 +441,6 @@ Elapsed time:         1.0s
 [2026-05-03 06:00:00] Iniciando sincronização do Excel...
 2026/05/03 06:00:00 CRITICAL: Failed to create file system for "gdrive1:15. Operação e Manutenção/Historico Geracao Solar Maranhao 2026.xlsx": didn't find section in config file ("gdrive1")
 [2026-05-03 06:00:00] ERRO na sincronização (exit code 1).
+[2026-05-04 06:00:00] Iniciando sincronização do Excel...
+2026/05/04 06:00:00 CRITICAL: Failed to create file system for "gdrive1:15. Operação e Manutenção/Historico Geracao Solar Maranhao 2026.xlsx": didn't find section in config file ("gdrive1")
+[2026-05-04 06:00:00] ERRO na sincronização (exit code 1).
