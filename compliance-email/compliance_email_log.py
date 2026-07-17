@@ -202,8 +202,8 @@ def fetch_email_logs(year: int, month: int, dest_path: str) -> int:
 
     log.info(f"Total de atividades brutas do domínio: {len(activities)}")
 
-    # Filtrar e processar apenas e-mails recebidos por compliance@
-    messages = {}  # message_id → melhor evento
+    # Agrupar eventos por mensagem (1 linha por evento, como o Email Log Search oficial)
+    por_mensagem = {}  # message_id → lista de (message_info, event_info, data_evento)
 
     for activity in activities:
         id_time = activity.get("id", {}).get("time", "")
@@ -221,44 +221,48 @@ def fetch_email_logs(year: int, month: int, dest_path: str) -> int:
             if COMPLIANCE_EMAIL.lower() not in destinos.lower():
                 continue
 
-            msg_id  = message_info.get("rfc2822_message_id", "") or id_time
-            sender  = str(message_info.get("flattened_sources", "")
-                          or message_info.get("source", "") or "")
-            subject = message_info.get("subject", "")
-            status  = map_status(event_info, message_info)
+            msg_id = message_info.get("rfc2822_message_id", "") or id_time
+            por_mensagem.setdefault(msg_id, []).append((message_info, event_info, id_time))
 
-            # Manter o evento de maior prioridade de status por message_id
-            existing = messages.get(msg_id)
-            if existing is None or STATUS_PRIORITY.get(status, 0) > STATUS_PRIORITY.get(existing["status"], 0):
-                messages[msg_id] = {
-                    "data":     id_time,
-                    "remetente": sender,
-                    "assunto":  subject,
-                    "status":   status,
-                }
+    log.info(f"E-mails únicos recebidos por {COMPLIANCE_EMAIL}: {len(por_mensagem)}")
 
-    log.info(f"E-mails únicos recebidos por {COMPLIANCE_EMAIL}: {len(messages)}")
+    # Montar as linhas: status final pré-calculado e repetido em cada evento da mensagem
+    rows = []
+    for msg_id, eventos in por_mensagem.items():
+        final = status_final(eventos)
+        remetente = remetente_estimado(msg_id)
+        for mi, ei, data_evento in eventos:
+            rows.append({
+                "data_evento":        data_evento,
+                "message_id":         msg_id,
+                "remetente_estimado": remetente,
+                "assunto":            mi.get("subject", ""),
+                "etapa":              classificar_evento(mi, ei),
+                "detalhe_smtp":       " ".join(str(mi.get("description", "") or "").split()),
+                "tamanho_bytes":      mi.get("payload_size", ""),
+                "anexos":             mi.get("num_message_attachments", ""),
+                "status_final":       final,
+            })
 
-    # Ordenar por data
-    rows = sorted(messages.values(), key=lambda r: r["data"])
-
-    # Formatar data para leitura humana
+    # Ordenar cronologicamente e formatar a data para leitura humana
+    rows.sort(key=lambda r: r["data_evento"])
     for row in rows:
         try:
-            dt = datetime.fromisoformat(row["data"].replace("Z", "+00:00"))
-            row["data"] = dt.strftime("%Y-%m-%d %H:%M:%S")
+            dt = datetime.fromisoformat(row["data_evento"].replace("Z", "+00:00"))
+            row["data_evento"] = dt.strftime("%Y-%m-%d %H:%M:%S")
         except Exception:
             pass
 
-    # Salvar CSV
-    fieldnames = ["data", "remetente", "assunto", "status"]
-    with open(dest_path, "w", newline="", encoding="utf-8") as f:
+    # Salvar CSV (utf-8-sig: abre com acentos corretos no Excel)
+    fieldnames = ["data_evento", "message_id", "remetente_estimado", "assunto", "etapa",
+                  "detalhe_smtp", "tamanho_bytes", "anexos", "status_final"]
+    with open(dest_path, "w", newline="", encoding="utf-8-sig") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
 
-    log.info(f"CSV salvo: {dest_path} ({len(rows)} linhas)")
-    return len(rows)
+    log.info(f"CSV salvo: {dest_path} ({len(rows)} linhas de evento, {len(por_mensagem)} mensagens)")
+    return len(por_mensagem)
 
 
 def upload_to_drive(drive_service, csv_path, filename):
