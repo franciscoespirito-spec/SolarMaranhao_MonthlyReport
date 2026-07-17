@@ -1684,3 +1684,10 @@ Execute no terminal do VS Code (VPS):
 2026-07-17 06:27:27,215 [INFO]   Página 6: 1000 atividades (total acumulado: 6000)
 2026-07-17 06:27:28,917 [INFO]   Página 7: 1000 atividades (total acumulado: 7000)
 2026-07-17 06:27:30,629 [INFO]   Página 8: 1000 atividades (total acumulado: 8000)
+2026-07-17 06:27:31,976 [INFO]   Página 9: 709 atividades (total acumulado: 8709)
+2026-07-17 06:27:31,977 [INFO]   Bloco 2026-07-16 a 2026-07-31: startTime=2026-07-16T00:00:00Z  endTime=2026-07-17T06:27:14Z
+2026-07-17 06:27:34,200 [INFO]   Página 1: 1000 atividades (total acumulado: 9709)
+2026-07-17 06:27:34,582 [INFO]   Página 2: 40 atividades (total acumulado: 9749)
+2026-07-17 06:27:34,582 [INFO] Total de atividades brutas do domínio: 9749
+2026-07-17 06:27:34,632 [INFO] E-mails únicos recebidos por compliance@beng.eng.br: 38
+2026-07-17 06:27:34,673 [INFO] file_cache is only supported with oauth2client<4.0.0
