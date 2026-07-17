@@ -247,26 +247,56 @@ def main():
         if baixar is None:
             falha(page, "baixar", "não achei o botão de download — a pesquisa retornou resultados?")
         baixar.click()
-        page.wait_for_timeout(2_000)
-        if DEBUG: shot(page, "06_menu_download")
+        page.wait_for_timeout(2_500)  # diálogo "Baixar resultados" abre
+        if DEBUG: shot(page, "06_dialogo_download")
 
-        # se abrir um menu/diálogo pedindo o formato, escolhe CSV
+        # O diálogo tem 2 opções (rádio): "Exportar para o Google Planilhas" (padrão)
+        # e "Baixar como arquivo CSV". Precisamos MARCAR o CSV antes de confirmar.
+        marcou = False
+        for tentativa in [
+            lambda: page.get_by_role("radio", name="Baixar como arquivo CSV"),
+            lambda: page.get_by_text("Baixar como arquivo CSV", exact=False),
+            lambda: page.locator("[role='radio']:near(:text('CSV'))"),
+        ]:
+            try:
+                loc = tentativa()
+                if loc.count() > 0 and loc.first.is_visible():
+                    loc.first.click()
+                    marcou = True
+                    log.info("Opção 'Baixar como arquivo CSV' marcada")
+                    break
+            except Exception:
+                continue
+        if not marcou:
+            falha(page, "opcao_csv", "não consegui marcar 'Baixar como arquivo CSV' no diálogo")
+        page.wait_for_timeout(800)
+        if DEBUG: shot(page, "07_csv_marcado")
+
+        # Clica em BAIXAR (confirmação do diálogo) e captura o download
         destino = f"{DIR_OFICIAL}/LogSearchResults_{datetime.now().strftime('%Y-%m-%d_%H%M')}.csv"
         try:
             with page.expect_download(timeout=120_000) as dl_info:
-                opcao_csv = page.locator(
-                    "[role='menuitem']:has-text('CSV'), [role='option']:has-text('CSV'), "
-                    "button:has-text('CSV'), label:has-text('CSV')"
-                )
-                if opcao_csv.count() > 0 and opcao_csv.first.is_visible():
-                    opcao_csv.first.click()
-                    # pode haver um botão de confirmação depois da escolha
-                    conf = page.get_by_role("button", name="Fazer o download")
-                    if conf.count() > 0 and conf.first.is_visible():
-                        conf.first.click()
+                confirmar = None
+                for tentativa in [
+                    lambda: page.get_by_role("button", name="Baixar", exact=True),
+                    lambda: page.get_by_role("button", name="BAIXAR"),
+                    lambda: page.locator("button:has-text('BAIXAR'), button:has-text('Baixar')"),
+                ]:
+                    try:
+                        loc = tentativa()
+                        if loc.count() > 0 and loc.last.is_visible():
+                            confirmar = loc.last
+                            break
+                    except Exception:
+                        continue
+                if confirmar is None:
+                    raise RuntimeError("botão BAIXAR do diálogo não encontrado")
+                confirmar.click()
             dl_info.value.save_as(destino)
         except PWTimeout:
-            falha(page, "download", "o download não começou em 2 minutos")
+            falha(page, "download", "o download não começou em 2 minutos após clicar BAIXAR")
+        except Exception as e:
+            falha(page, "download", f"erro ao confirmar download: {str(e)[:120]}")
 
         tamanho = os.path.getsize(destino)
         log.info(f"CSV salvo: {destino} ({tamanho} bytes)")
