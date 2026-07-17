@@ -48,7 +48,10 @@ def get_period(year=None, month=None):
     if year and month:
         ref = date(year, month, 1)
     else:
-        ref = date.today()
+        # Sem argumentos: usa o MÊS ANTERIOR (fechado). O cron roda no dia 1 às 6h UTC,
+        # antes do e-mail marcador do mês novo (9h UTC) — o mês corrente estaria vazio.
+        hoje = date.today()
+        ref = date(hoje.year, hoje.month, 1) - timedelta(days=1)
     first_day = date(ref.year, ref.month, 1)
     last_day  = date(ref.year, ref.month, monthrange(ref.year, ref.month)[1])
     start_time = datetime(first_day.year, first_day.month, first_day.day,
