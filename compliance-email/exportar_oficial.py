@@ -292,50 +292,80 @@ def main():
             falha(page, "baixar_dialogo", "botão BAIXAR do diálogo não encontrado")
         confirmar.click()
         log.info("Tarefa de geração do CSV enfileirada; aguardando ficar pronta")
-        page.wait_for_timeout(3_000)
-        if DEBUG: shot(page, "08_tarefa_enfileirada")
+        page.wait_for_timeout(4_000)
+        if DEBUG: shot(page, "08_pos_baixar")
 
-        # Localiza o link "Baixar CSV" (na notificação ou no painel de Tarefas)
+        # Localiza o link "Baixar CSV" (texto exato do painel de Tarefas)
         def achar_link_csv():
-            for fabrica in [
-                lambda: page.get_by_role("link", name="Baixar CSV"),
-                lambda: page.locator("a:has-text('Baixar CSV'), [role='link']:has-text('Baixar CSV')"),
-            ]:
+            loc = page.get_by_text("Baixar CSV", exact=False)
+            for i in range(loc.count()):
                 try:
-                    loc = fabrica()
-                    for i in range(loc.count()):
-                        if loc.nth(i).is_visible():
-                            return loc.nth(i)
+                    if loc.nth(i).is_visible():
+                        return loc.nth(i)
                 except Exception:
                     continue
             return None
 
-        painel_aberto = False
+        # O painel está aberto? (marcadores de texto do painel de Tarefas)
+        def painel_visivel():
+            for marcador in ("SUAS TAREFAS", "Concluído", "pronto para download", "TAREFAS DOS OUTROS"):
+                try:
+                    if page.get_by_text(marcador, exact=False).count() > 0:
+                        return True
+                except Exception:
+                    pass
+            return False
+
+        def abrir_painel_tarefas():
+            for fabrica in [
+                lambda: page.get_by_role("button", name="Tarefas"),
+                lambda: page.get_by_role("button", name="Tasks"),
+                lambda: page.locator("[aria-label*='tarefa' i]"),
+                lambda: page.locator("[aria-label*='task' i]"),
+                lambda: page.locator("header [role='button'], [role='banner'] [role='button']"),
+            ]:
+                try:
+                    loc = fabrica()
+                    for i in range(min(loc.count(), 8)):
+                        if loc.nth(i).is_visible():
+                            loc.nth(i).click()
+                            page.wait_for_timeout(1_500)
+                            if painel_visivel() or achar_link_csv():
+                                return True
+                except Exception:
+                    continue
+            return False
+
+        # Aguarda a tarefa concluir (até ~2,5 min). Só abre o painel se ele NÃO estiver visível.
         link = None
-        # Aguarda a tarefa concluir (até ~2,5 min), abrindo o painel de Tarefas se preciso
         for ciclo in range(50):
             link = achar_link_csv()
             if link is not None:
                 break
-            if not painel_aberto:
-                for fabrica in [
-                    lambda: page.get_by_role("button", name="Tarefas"),
-                    lambda: page.get_by_role("button", name="Tasks"),
-                    lambda: page.locator("[aria-label*='tarefa' i]"),
-                    lambda: page.locator("[aria-label*='task' i]"),
-                ]:
-                    try:
-                        loc = fabrica()
-                        if loc.count() > 0 and loc.first.is_visible():
-                            loc.first.click()
-                            painel_aberto = True
-                            page.wait_for_timeout(1_500)
-                            break
-                    except Exception:
-                        continue
+            if not painel_visivel():
+                abrir_painel_tarefas()
             page.wait_for_timeout(3_000)
         if DEBUG: shot(page, "09_painel_tarefas")
+
         if link is None:
+            # Diagnóstico: registra todos os links/botões visíveis com CSV/Baixar/download
+            try:
+                cands = page.locator("a, button, [role='link'], [role='button']")
+                achados = []
+                for i in range(min(cands.count(), 200)):
+                    el = cands.nth(i)
+                    try:
+                        if not el.is_visible():
+                            continue
+                        txt = (el.inner_text() or "").strip()
+                        al = el.get_attribute("aria-label") or ""
+                        if any(p in (txt + al).lower() for p in ("csv", "baixar", "download", "tarefa")):
+                            achados.append(f"[{el.evaluate('e=>e.tagName')}] txt='{txt[:40]}' aria='{al[:40]}'")
+                    except Exception:
+                        continue
+                log.error("Candidatos visíveis (CSV/baixar/download/tarefa): " + " | ".join(achados[:25]))
+            except Exception:
+                pass
             falha(page, "download", "o link 'Baixar CSV' não apareceu no painel de Tarefas em ~2,5 min")
 
         # Clica no link → captura o download real
