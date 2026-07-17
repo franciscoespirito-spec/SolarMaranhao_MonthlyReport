@@ -133,67 +133,78 @@ def main():
         if DEBUG: shot(page, "02_destinatario")
 
         # ── Etapa 3: escolher o período PRÉ-DEFINIDO (nunca digitar datas) ──
-        log.info("Etapa 3: selecionando período pré-definido")
-        seletor_periodo = None
-        for tentativa in [
-            lambda: page.get_by_label("Período da mensagem", exact=False),
-            lambda: page.get_by_label("Message period", exact=False),
-            lambda: page.locator("[aria-label*='período' i]"),
-            lambda: page.locator("[aria-label*='period' i]"),
-            lambda: page.get_by_role("combobox").first,
-        ]:
-            try:
-                loc = tentativa()
-                if loc.count() > 0 and loc.first.is_visible():
-                    seletor_periodo = loc.first
-                    break
-            except Exception:
-                continue
-        if seletor_periodo is None:
-            falha(page, "periodo", "não achei o seletor de período — a tela pode ter mudado")
+        log.info("Etapa 3: selecionando período 'Últimos 7 dias'")
 
-        # Procura a opção VISÍVEL "Últimos 7 dias" (o Google duplica itens ocultos)
-        def achar_visivel():
+        def achar_opcao_visivel():
             candidatos = page.locator(SELETOR_OPCAO_7DIAS)
             for i in range(candidatos.count()):
                 if candidatos.nth(i).is_visible():
                     return candidatos.nth(i)
             return None
 
-        # O menu demora a renderizar: clica e SONDA com paciência antes de reabrir
         def esperar_opcao(timeout_ms):
             decorrido = 0
             while decorrido < timeout_ms:
-                alvo = achar_visivel()
+                alvo = achar_opcao_visivel()
                 if alvo:
                     return alvo
                 page.wait_for_timeout(500)
                 decorrido += 500
             return None
 
+        # Plano A: achar o GATILHO visual do menu e clicar (vários candidatos)
+        gatilhos = [
+            ("texto 'Período das mensagens'", lambda: page.get_by_text("Período das mensagens", exact=False)),
+            ("texto 'Período da mensagem'",   lambda: page.get_by_text("Período da mensagem", exact=False)),
+            ("aria-haspopup=listbox",         lambda: page.locator("[aria-haspopup='listbox']")),
+            ("combobox",                      lambda: page.get_by_role("combobox")),
+            ("aria-label período",            lambda: page.locator("[aria-label*='período' i][aria-label*='mensag' i]")),
+        ]
         alvo = None
-        for tentativa in range(1, 4):
-            log.info(f"Abrindo menu de período (tentativa {tentativa})")
-            seletor_periodo.scroll_into_view_if_needed()
-            seletor_periodo.click()
-            alvo = esperar_opcao(8_000)
+        for nome, fabrica in gatilhos:
+            try:
+                loc = fabrica()
+                n = loc.count()
+            except Exception:
+                continue
+            for i in range(min(n, 4)):
+                cand = loc.nth(i)
+                try:
+                    if not cand.is_visible():
+                        continue
+                    log.info(f"Tentando abrir menu via: {nome} (elemento {i})")
+                    cand.scroll_into_view_if_needed()
+                    cand.click()
+                    alvo = esperar_opcao(5_000)
+                    if alvo:
+                        break
+                    page.keyboard.press("Escape")
+                    page.wait_for_timeout(800)
+                except Exception as e:
+                    log.info(f"  gatilho '{nome}' falhou: {str(e)[:80]}")
             if alvo:
+                log.info(f"Menu aberto via: {nome}")
                 break
-            page.keyboard.press("Escape")   # fecha o que quer que tenha aberto
-            page.wait_for_timeout(1_000)
         if DEBUG: shot(page, "03_menu_periodo_aberto")
 
-        if alvo is None:
-            # registra as opções vistas para depuração
-            try:
-                todas = page.get_by_role("option")
-                textos = [todas.nth(i).inner_text().strip() for i in range(todas.count())]
-            except Exception:
-                textos = []
-            falha(page, "preset", f"não achei opção VISÍVEL 'Últimos 7 dias'. Opções vistas: {textos}")
+        if alvo is not None:
+            alvo.click()
+            page.wait_for_timeout(1_000)
+        else:
+            # Plano C: acionar a opção OCULTA via JavaScript e conferir se pegou
+            log.warning("Menu não abriu visualmente — acionando a opção por JavaScript")
+            cand = page.locator("li[role='option'][data-value='last7Days']")
+            if cand.count() == 0:
+                falha(page, "preset", "opção 'Últimos 7 dias' não existe no HTML — tela mudou")
+            cand.first.evaluate("el => el.click()")
+            page.wait_for_timeout(1_500)
+            # confere se o seletor agora exibe o período escolhido
+            confer = page.get_by_text("Últimos 7 dias", exact=False)
+            visivel = any(confer.nth(i).is_visible() for i in range(min(confer.count(), 6)))
+            if not visivel:
+                falha(page, "preset", "cliquei por JavaScript mas a seleção não confirmou na tela")
+            log.info("Seleção por JavaScript confirmada na tela")
         log.info("Período escolhido: 'Últimos 7 dias'")
-        alvo.click()
-        page.wait_for_timeout(1_000)
         if DEBUG: shot(page, "04_periodo_escolhido")
 
         # ── Etapa 4: pesquisar ───────────────────────────────────────────────
