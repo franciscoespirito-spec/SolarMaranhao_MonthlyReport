@@ -272,31 +272,80 @@ def main():
         page.wait_for_timeout(800)
         if DEBUG: shot(page, "07_csv_marcado")
 
-        # Clica em BAIXAR (confirmação do diálogo) e captura o download
-        destino = f"{DIR_OFICIAL}/LogSearchResults_{datetime.now().strftime('%Y-%m-%d_%H%M')}.csv"
-        try:
-            with page.expect_download(timeout=120_000) as dl_info:
-                confirmar = None
-                for tentativa in [
-                    lambda: page.get_by_role("button", name="Baixar", exact=True),
-                    lambda: page.get_by_role("button", name="BAIXAR"),
-                    lambda: page.locator("button:has-text('BAIXAR'), button:has-text('Baixar')"),
+        # Clica em BAIXAR do diálogo — isso ENFILEIRA uma tarefa (não baixa direto).
+        # O Google gera o CSV de forma assíncrona e disponibiliza um link "Baixar CSV"
+        # no painel de Tarefas (ícone de relógio no topo).
+        confirmar = None
+        for tentativa in [
+            lambda: page.get_by_role("button", name="Baixar", exact=True),
+            lambda: page.get_by_role("button", name="BAIXAR"),
+            lambda: page.locator("button:has-text('BAIXAR'), button:has-text('Baixar')"),
+        ]:
+            try:
+                loc = tentativa()
+                if loc.count() > 0 and loc.last.is_visible():
+                    confirmar = loc.last
+                    break
+            except Exception:
+                continue
+        if confirmar is None:
+            falha(page, "baixar_dialogo", "botão BAIXAR do diálogo não encontrado")
+        confirmar.click()
+        log.info("Tarefa de geração do CSV enfileirada; aguardando ficar pronta")
+        page.wait_for_timeout(3_000)
+        if DEBUG: shot(page, "08_tarefa_enfileirada")
+
+        # Localiza o link "Baixar CSV" (na notificação ou no painel de Tarefas)
+        def achar_link_csv():
+            for fabrica in [
+                lambda: page.get_by_role("link", name="Baixar CSV"),
+                lambda: page.locator("a:has-text('Baixar CSV'), [role='link']:has-text('Baixar CSV')"),
+            ]:
+                try:
+                    loc = fabrica()
+                    for i in range(loc.count()):
+                        if loc.nth(i).is_visible():
+                            return loc.nth(i)
+                except Exception:
+                    continue
+            return None
+
+        painel_aberto = False
+        link = None
+        # Aguarda a tarefa concluir (até ~2,5 min), abrindo o painel de Tarefas se preciso
+        for ciclo in range(50):
+            link = achar_link_csv()
+            if link is not None:
+                break
+            if not painel_aberto:
+                for fabrica in [
+                    lambda: page.get_by_role("button", name="Tarefas"),
+                    lambda: page.get_by_role("button", name="Tasks"),
+                    lambda: page.locator("[aria-label*='tarefa' i]"),
+                    lambda: page.locator("[aria-label*='task' i]"),
                 ]:
                     try:
-                        loc = tentativa()
-                        if loc.count() > 0 and loc.last.is_visible():
-                            confirmar = loc.last
+                        loc = fabrica()
+                        if loc.count() > 0 and loc.first.is_visible():
+                            loc.first.click()
+                            painel_aberto = True
+                            page.wait_for_timeout(1_500)
                             break
                     except Exception:
                         continue
-                if confirmar is None:
-                    raise RuntimeError("botão BAIXAR do diálogo não encontrado")
-                confirmar.click()
+            page.wait_for_timeout(3_000)
+        if DEBUG: shot(page, "09_painel_tarefas")
+        if link is None:
+            falha(page, "download", "o link 'Baixar CSV' não apareceu no painel de Tarefas em ~2,5 min")
+
+        # Clica no link → captura o download real
+        destino = f"{DIR_OFICIAL}/LogSearchResults_{datetime.now().strftime('%Y-%m-%d_%H%M')}.csv"
+        try:
+            with page.expect_download(timeout=120_000) as dl_info:
+                link.click()
             dl_info.value.save_as(destino)
         except PWTimeout:
-            falha(page, "download", "o download não começou em 2 minutos após clicar BAIXAR")
-        except Exception as e:
-            falha(page, "download", f"erro ao confirmar download: {str(e)[:120]}")
+            falha(page, "download", "cliquei em 'Baixar CSV' mas o download não começou")
 
         tamanho = os.path.getsize(destino)
         log.info(f"CSV salvo: {destino} ({tamanho} bytes)")
