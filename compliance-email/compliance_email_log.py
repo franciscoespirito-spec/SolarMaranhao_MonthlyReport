@@ -163,27 +163,24 @@ def fetch_email_logs(year: int, month: int, dest_path: str) -> int:
     for activity in activities:
         id_time = activity.get("id", {}).get("time", "")
         for event in activity.get("events", []):
-            params = parse_params(event.get("parameters", []))
-
-            # Filtrar direção RECEIVED
-            direction = str(params.get("message_direction", "")).upper()
-            if direction != "RECEIVED":
+            # Só interessam eventos de entrega de mensagem
+            if event.get("name") != "delivery":
                 continue
 
-            # Filtrar destinatário compliance@beng.eng.br
-            envelope_to = params.get("envelope_to", [])
-            if isinstance(envelope_to, str):
-                envelope_to = [envelope_to]
-            recipients = [r.lower() for r in envelope_to]
-            if COMPLIANCE_EMAIL.lower() not in recipients:
+            message_info = get_nested(event.get("parameters", []), "message_info")
+            event_info   = get_nested(event.get("parameters", []), "event_info")
+
+            # Filtrar destinatário: compliance@ aparece dentro de flattened_destinations
+            # (ex: "gmail-ui::compliance@beng.eng.br")
+            destinos = str(message_info.get("flattened_destinations", "") or "")
+            if COMPLIANCE_EMAIL.lower() not in destinos.lower():
                 continue
 
-            msg_id   = params.get("message_id", "")
-            sender   = params.get("envelope_from", "")
-            subject  = params.get("subject", "")
-            smtp_code = params.get("smtp_reply_code", "")
-            event_info = params.get("event_info", "")
-            status   = map_status(smtp_code, event_info)
+            msg_id  = message_info.get("rfc2822_message_id", "") or id_time
+            sender  = str(message_info.get("flattened_sources", "")
+                          or message_info.get("source", "") or "")
+            subject = message_info.get("subject", "")
+            status  = map_status(event_info, message_info)
 
             # Manter o evento de maior prioridade de status por message_id
             existing = messages.get(msg_id)
