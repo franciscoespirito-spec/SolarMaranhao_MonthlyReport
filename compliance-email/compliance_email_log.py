@@ -102,35 +102,54 @@ def fetch_email_logs(year: int, month: int, dest_path: str) -> int:
     """
     first_day, last_day, start_time, end_time = get_period(year, month)
     log.info(f"Admin SDK Reports API: período {first_day} a {last_day}")
-    log.info(f"  startTime={start_time}  endTime={end_time}")
 
     creds = service_account.Credentials.from_service_account_file(
         SERVICE_ACCOUNT_FILE, scopes=ADMIN_SCOPES
     ).with_subject(DELEGATED_USER)
     service = build("admin", "reports_v1", credentials=creds)
 
-    # Buscar todas as atividades de Gmail do domínio no período
+    # A API limita cada consulta a no máximo 30 dias — meses de 31 dias falhavam.
+    # Solução: dividir o mês em 2 blocos (dia 1–15 e dia 16–fim) e somar os resultados.
+    meio_fim = date(first_day.year, first_day.month, 15)
+    meio_ini = date(first_day.year, first_day.month, 16)
+    blocos = [(first_day, meio_fim), (meio_ini, last_day)]
+
+    agora = datetime.now(timezone.utc)
     activities = []
-    page_token = None
-    page = 0
-    while True:
-        page += 1
-        resp = service.activities().list(
-            userKey="all",
-            applicationName="gmail",
-            startTime=start_time,
-            endTime=end_time,
-            maxResults=1000,
-            pageToken=page_token,
-        ).execute()
+    for bloco_ini, bloco_fim in blocos:
+        start_dt = datetime(bloco_ini.year, bloco_ini.month, bloco_ini.day,
+                            0, 0, 0, tzinfo=timezone.utc)
+        end_dt   = datetime(bloco_fim.year, bloco_fim.month, bloco_fim.day,
+                            23, 59, 59, tzinfo=timezone.utc)
+        if start_dt > agora:
+            continue  # bloco totalmente no futuro — nada a consultar
+        if end_dt > agora:
+            end_dt = agora  # não pedir dados do futuro
+        start_time = start_dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+        end_time   = end_dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+        log.info(f"  Bloco {bloco_ini} a {bloco_fim}: startTime={start_time}  endTime={end_time}")
 
-        batch = resp.get("items", [])
-        activities.extend(batch)
-        log.info(f"  Página {page}: {len(batch)} atividades (total acumulado: {len(activities)})")
+        # Buscar todas as atividades de Gmail do domínio no bloco
+        page_token = None
+        page = 0
+        while True:
+            page += 1
+            resp = service.activities().list(
+                userKey="all",
+                applicationName="gmail",
+                startTime=start_time,
+                endTime=end_time,
+                maxResults=1000,
+                pageToken=page_token,
+            ).execute()
 
-        page_token = resp.get("nextPageToken")
-        if not page_token:
-            break
+            batch = resp.get("items", [])
+            activities.extend(batch)
+            log.info(f"  Página {page}: {len(batch)} atividades (total acumulado: {len(activities)})")
+
+            page_token = resp.get("nextPageToken")
+            if not page_token:
+                break
 
     log.info(f"Total de atividades brutas do domínio: {len(activities)}")
 
