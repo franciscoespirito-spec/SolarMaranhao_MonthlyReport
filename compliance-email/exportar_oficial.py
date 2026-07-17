@@ -314,6 +314,7 @@ def definir_data(page, rotulo, data):
         if atual is None:
             log.warning(f"  não li o mês do calendário para '{rotulo}'")
             return False
+        log.info(f"  '{rotulo}': calendário em {atual}, alvo {alvo}")
         if atual == alvo:
             break
         direcao = -1 if alvo < atual else 1
