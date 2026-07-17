@@ -151,13 +151,59 @@ def mes_do_calendario(page, timeout_ms=6000):
     return None
 
 
-def abrir_calendario(page, rotulo):
-    """Clica no campo de data e espera o calendário (gridcell) renderizar."""
-    campo = page.locator(f"input[aria-label='{rotulo}']")
+def _gridcells_visiveis(page):
+    gc = page.locator("[role='gridcell']")
+    return sum(1 for i in range(gc.count()) if gc.nth(i).is_visible())
+
+
+def fechar_calendario(page):
+    """Fecha qualquer calendário aberto clicando num rótulo neutro (não usa Escape,
+    que reseta o modo 'Especificar o intervalo')."""
     for _ in range(3):
-        if not clicar_visivel(campo):
-            return False
+        if _gridcells_visiveis(page) == 0:
+            return
+        for fabrica in [
+            lambda: page.get_by_text("*Obrigatório", exact=False),
+            lambda: page.get_by_text("Pesquisa de registros de e-mail", exact=False),
+        ]:
+            try:
+                loc = fabrica()
+                if loc.count() > 0 and loc.first.is_visible():
+                    loc.first.click()
+                    break
+            except Exception:
+                continue
+        page.wait_for_timeout(600)
+
+
+def _toggles_datas(page):
+    """Os 2 ícones 📅 (De, Até) ordenados por posição x (De = esquerda)."""
+    loc = page.locator("[jsname='esgecf']")
+    vis = []
+    for i in range(loc.count()):
+        e = loc.nth(i)
         try:
+            if e.is_visible():
+                bb = e.bounding_box()
+                if bb:
+                    vis.append((bb["x"], e))
+        except Exception:
+            pass
+    vis.sort(key=lambda t: t[0])
+    return [e for _, e in vis]
+
+
+def abrir_calendario(page, rotulo):
+    """Abre o calendário do campo 'De' ou 'Até' pelo ícone (fechando o que estiver aberto)."""
+    for _ in range(3):
+        fechar_calendario(page)
+        toggles = _toggles_datas(page)
+        if len(toggles) < 2:
+            page.wait_for_timeout(500)
+            continue
+        alvo = toggles[0] if rotulo == "De" else toggles[1]
+        try:
+            alvo.click()
             page.wait_for_selector("[role='gridcell']", state="visible", timeout=5000)
             page.wait_for_timeout(400)
             return True
