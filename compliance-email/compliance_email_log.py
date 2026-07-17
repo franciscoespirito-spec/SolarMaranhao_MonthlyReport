@@ -126,6 +126,48 @@ def remetente_estimado(msg_id):
     return f"{dominio} (estimado)"
 
 
+def buscar_remetentes_reais(message_ids):
+    """Busca o remetente real (cabeçalho From) via Gmail API, para mensagens ENTREGUES.
+
+    Requer o escopo gmail.readonly autorizado na delegação em todo o domínio
+    (Admin Console). Mensagens rejeitadas na porta nunca entraram na caixa e não
+    têm remetente disponível. Se o escopo ainda não estiver autorizado, retorna {}
+    e a planilha segue com o remetente estimado (aviso registrado no log).
+    """
+    remetentes = {}
+    try:
+        creds = service_account.Credentials.from_service_account_file(
+            SERVICE_ACCOUNT_FILE, scopes=GMAIL_SCOPES
+        ).with_subject(DELEGATED_USER)
+        gmail = build("gmail", "v1", credentials=creds)
+        for mid in message_ids:
+            try:
+                busca = gmail.users().messages().list(
+                    userId="me",
+                    q=f"rfc822msgid:{mid.strip('<>')}",
+                    maxResults=1,
+                    includeSpamTrash=True,  # inclui a caixa de spam
+                ).execute()
+                achados = busca.get("messages", [])
+                if not achados:
+                    continue
+                msg = gmail.users().messages().get(
+                    userId="me", id=achados[0]["id"],
+                    format="metadata", metadataHeaders=["From"],
+                ).execute()
+                for h in msg.get("payload", {}).get("headers", []):
+                    if h.get("name", "").lower() == "from":
+                        remetentes[mid] = h.get("value", "")
+                        break
+            except Exception as e:
+                log.warning(f"Gmail: falha ao buscar remetente de {mid}: {e}")
+    except Exception as e:
+        log.warning(f"Gmail API indisponível (escopo gmail.readonly autorizado?): {e}")
+        log.warning("Planilha seguirá com remetente estimado.")
+    log.info(f"Remetentes reais encontrados via Gmail: {len(remetentes)}/{len(message_ids)}")
+    return remetentes
+
+
 def status_final(eventos):
     """Status final da mensagem, igual à leitura da tela oficial.
 
