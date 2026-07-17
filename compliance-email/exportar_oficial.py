@@ -155,32 +155,32 @@ def main():
         page.wait_for_timeout(1_500)
         if DEBUG: shot(page, "03_menu_periodo_aberto")
 
-        opcoes = page.get_by_role("option")
-        textos = []
+        # Registra as opções vistas (para depuração caso o Google mude a tela)
         try:
-            n = opcoes.count()
-            textos = [opcoes.nth(i).inner_text().strip() for i in range(n)]
+            todas = page.get_by_role("option")
+            textos = [todas.nth(i).inner_text().strip() for i in range(todas.count())]
+            log.info(f"Opções de período encontradas: {textos}")
         except Exception:
-            pass
-        if not textos:  # fallback: itens de menu genéricos
-            itens = page.locator("[role='menuitem'], [role='listbox'] li, mat-option")
-            n = itens.count()
-            textos = [itens.nth(i).inner_text().strip() for i in range(n)]
-            opcoes = itens
-        log.info(f"Opções de período encontradas: {textos}")
+            textos = []
 
-        escolhida = None
-        for pref in PRESETS_PREFERIDOS:
-            for i, t in enumerate(textos):
-                if pref in t.lower():
-                    escolhida = (i, t)
-                    break
-            if escolhida:
-                break
-        if escolhida is None:
-            falha(page, "preset", f"nenhum período pré-definido reconhecido. Opções vistas: {textos}")
-        log.info(f"Período escolhido: '{escolhida[1]}'")
-        opcoes.nth(escolhida[0]).click()
+        # Clica APENAS na opção VISÍVEL "Últimos 7 dias" (o Google duplica itens ocultos)
+        def achar_visivel():
+            candidatos = page.locator(SELETOR_OPCAO_7DIAS)
+            for i in range(candidatos.count()):
+                if candidatos.nth(i).is_visible():
+                    return candidatos.nth(i)
+            return None
+
+        alvo = achar_visivel()
+        if alvo is None:
+            # o menu pode ter fechado — reabre e tenta de novo
+            seletor_periodo.click()
+            page.wait_for_timeout(1_500)
+            alvo = achar_visivel()
+        if alvo is None:
+            falha(page, "preset", f"não achei opção VISÍVEL 'Últimos 7 dias'. Opções vistas: {textos}")
+        log.info("Período escolhido: 'Últimos 7 dias'")
+        alvo.click()
         page.wait_for_timeout(1_000)
         if DEBUG: shot(page, "04_periodo_escolhido")
 
