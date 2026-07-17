@@ -33,14 +33,14 @@ LOG_FILE      = f"{DIR_OFICIAL}/exportar_oficial.log"
 URL_LOGSEARCH = "https://admin.google.com/ac/emaillogsearch"
 DESTINATARIO  = "compliance@beng.eng.br"
 
-# Períodos pré-definidos aceitos, em ordem de preferência (PT e EN).
-# NUNCA escolher "personalizado"/"custom" — é o campo com bug de máscara.
-PRESETS_PREFERIDOS = [
-    "mês passado", "last month",
-    "últimos 30 dias", "last 30 days",
-    "este mês", "this month",
-    "últimos 7 dias", "last 7 days",
-]
+# O maior período pré-definido do menu é "Últimos 7 dias" (verificado em 17/07/2026;
+# opções reais: Hoje / Desde ontem / Últimos 7 dias / Especificar o intervalo / Mais de 30 dias).
+# NUNCA escolher "Especificar o intervalo" — é o campo com bug de máscara.
+SELETOR_OPCAO_7DIAS = (
+    "li[role='option'][data-value='last7Days'], "
+    "[role='option'][aria-label*='7 dias' i], "
+    "[role='option']:has-text('Últimos 7 dias')"
+)
 
 os.makedirs(DIR_OFICIAL, exist_ok=True)
 logging.basicConfig(
