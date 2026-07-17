@@ -307,46 +307,31 @@ def selecionar_intervalo_maximo(page):
     page.wait_for_timeout(2_000)
     if DEBUG: shot(page, "03a_intervalo_selecionado")
 
-    def fechar_popups():
-        for _ in range(2):
-            try:
-                page.keyboard.press("Escape")
-            except Exception:
-                pass
-            page.wait_for_timeout(400)
-
     hoje = datetime.now(timezone.utc).date()
-    # Tenta da janela MAIOR para a menor; o Google limita a ~30 dias (dias além
-    # ficam DESABILITADOS no calendário). A primeira que preencher os dois campos vence.
-    for dias in (31, 30, 29, 28):
-        fechar_popups()  # estado limpo entre tentativas
-        inicio = hoje - timedelta(days=dias)
-        log.info(f"Janela de {dias} dias: {inicio} → {hoje}")
-        ok_de = definir_data(page, "De", inicio)
-        if not ok_de:
-            log.info(f"  'De' ({inicio}) indisponível; tentando janela menor")
-            continue
-        ok_ate = definir_data(page, "Até", hoje)
-        de_v, ate_v = valor_campo(page, "De"), valor_campo(page, "Até")
-        log.info(f"  campos: De='{de_v}'  Até='{ate_v}' (ok_ate={ok_ate})")
-        if DEBUG: shot(page, f"03b_datas_{dias}d")
-        if not (ok_ate and de_v and ate_v):
-            log.warning(f"  janela de {dias} dias não preencheu 'Até'")
-            continue
-        erro = erro_de_intervalo(page)
-        if erro:
-            log.warning(f"  validação recusou ({erro}); janela menor")
-            continue
-        if not clicar_pesquisar(page):
-            raise RuntimeError("botão Pesquisar não encontrado")
-        page.wait_for_timeout(10_000)
-        erro = erro_de_intervalo(page)
-        if erro:
-            log.warning(f"  pesquisa recusou a janela de {dias} dias ({erro})")
-            continue
-        log.info(f"✅ Janela de {dias} dias aceita")
-        return dias
-    raise RuntimeError("nenhuma janela (31–28 dias) foi aceita")
+    # 1) "Até" = hoje (mês atual, clica o dia de hoje)
+    if not definir_data(page, "Até", hoje):
+        raise RuntimeError("não consegui definir 'Até' = hoje")
+    # 2) "De" = data habilitada mais antiga (o próprio limite do Google, ~30 dias)
+    de = definir_de_mais_antiga(page)
+    if de is None:
+        raise RuntimeError("não consegui definir 'De' (data mais antiga)")
+    dias = (hoje - de).days
+    de_v, ate_v = valor_campo(page, "De"), valor_campo(page, "Até")
+    log.info(f"Janela escolhida: {de} → {hoje} ({dias} dias) | campos De='{de_v}' Até='{ate_v}'")
+    if DEBUG: shot(page, "03b_datas_definidas")
+    if not (de_v and ate_v):
+        raise RuntimeError("campos De/Até ficaram vazios")
+    erro = erro_de_intervalo(page)
+    if erro:
+        raise RuntimeError(f"validação recusou o intervalo ({erro})")
+    if not clicar_pesquisar(page):
+        raise RuntimeError("botão Pesquisar não encontrado")
+    page.wait_for_timeout(10_000)
+    erro = erro_de_intervalo(page)
+    if erro:
+        raise RuntimeError(f"pesquisa recusou o intervalo ({erro})")
+    log.info(f"✅ Janela de {dias} dias aceita")
+    return dias
 
 
 def selecionar_preset_7dias(page):
