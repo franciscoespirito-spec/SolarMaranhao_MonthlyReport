@@ -166,6 +166,58 @@ def clicar_dia(page, dia):
     return False
 
 
+def menor_dia_habilitado(page):
+    """Menor número de dia HABILITADO no calendário visível (int) ou None."""
+    gc = page.locator("[role='gridcell']")
+    melhor = None
+    for i in range(gc.count()):
+        e = gc.nth(i)
+        try:
+            if not e.is_visible():
+                continue
+            t = (e.inner_text() or "").strip()
+            if not t.isdigit():
+                continue
+            if e.get_attribute("aria-disabled") == "true":
+                continue
+            d = int(t)
+            if melhor is None or d < melhor:
+                melhor = d
+        except Exception:
+            continue
+    return melhor
+
+
+def definir_de_mais_antiga(page):
+    """Abre 'De', vai ao mês anterior e clica no dia HABILITADO mais antigo.
+
+    Esse é exatamente o limite do Google (~30 dias): dias além ficam desabilitados.
+    Retorna a data (date) escolhida ou None.
+    """
+    from datetime import date
+    if not clicar_visivel(page.locator("input[aria-label='De']")):
+        return None
+    page.wait_for_timeout(1_200)
+    if mes_do_calendario(page) is None:
+        return None
+    # tenta o mês anterior; se não houver dia habilitado lá, usa o mês atual
+    navegar_mes(page, -1)
+    page.wait_for_timeout(700)
+    mes = mes_do_calendario(page)
+    dia = menor_dia_habilitado(page)
+    if dia is None:
+        navegar_mes(page, +1)
+        page.wait_for_timeout(700)
+        mes = mes_do_calendario(page)
+        dia = menor_dia_habilitado(page)
+    if dia is None or mes is None:
+        return None
+    if clicar_dia(page, dia) is not True:
+        return None
+    page.wait_for_timeout(800)
+    return date(mes[0], mes[1], dia)
+
+
 def valor_campo(page, rotulo):
     loc = page.locator(f"input[aria-label='{rotulo}']")
     for i in range(loc.count()):
