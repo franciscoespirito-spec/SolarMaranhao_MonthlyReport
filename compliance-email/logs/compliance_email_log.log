@@ -1558,3 +1558,10 @@ Execute no terminal do VS Code (VPS):
 2026-07-17 05:42:35,006 [INFO]   Página 5: 1000 atividades (total acumulado: 14098)
 2026-07-17 05:42:36,890 [INFO]   Página 6: 1000 atividades (total acumulado: 15098)
 2026-07-17 05:42:38,623 [INFO]   Página 7: 1000 atividades (total acumulado: 16098)
+2026-07-17 05:42:39,243 [INFO]   Página 8: 237 atividades (total acumulado: 16335)
+2026-07-17 05:42:39,244 [INFO] Total de atividades brutas do domínio: 16335
+2026-07-17 05:42:39,348 [INFO] E-mails únicos recebidos por compliance@beng.eng.br: 87
+2026-07-17 05:42:39,349 [INFO] CSV salvo: /root/projetos/compliance-email/logs/compliance_logs_2026-07-17_05-42-07.csv (87 linhas)
+2026-07-17 05:42:39,498 [INFO] file_cache is only supported with oauth2client<4.0.0
+2026-07-17 05:42:41,991 [INFO] Upload concluído: compliance_logs_2026-07-17_05-42-07.csv (ID: 1VdB8GniPRMS6cUjOMtXNElgy14CMnv0l)
+2026-07-17 05:42:41,991 [INFO] Rotina concluída com sucesso.
