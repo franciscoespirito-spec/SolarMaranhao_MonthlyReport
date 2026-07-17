@@ -34,6 +34,7 @@ DOWNLOAD_DIR         = "/root/projetos/compliance-email/logs"
 
 ADMIN_SCOPES = ["https://www.googleapis.com/auth/admin.reports.audit.readonly"]
 DRIVE_SCOPES = ["https://www.googleapis.com/auth/drive"]
+GMAIL_SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 os.makedirs("/root/projetos/compliance-email/logs", exist_ok=True)
