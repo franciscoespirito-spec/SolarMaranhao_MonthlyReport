@@ -1477,3 +1477,9 @@ Execute no terminal do VS Code (VPS):
 2026-07-17 05:20:47,217 [INFO] Admin SDK Reports API: período 2026-06-01 a 2026-06-30
 2026-07-17 05:20:47,217 [INFO]   startTime=2026-06-01T00:00:00Z  endTime=2026-06-30T23:59:59Z
 2026-07-17 05:20:47,259 [INFO] file_cache is only supported with oauth2client<4.0.0
+2026-07-17 05:34:18,437 [INFO] ============================================================
+2026-07-17 05:34:18,437 [INFO] Iniciando rotina de compliance email log (Admin SDK Reports API)
+2026-07-17 05:34:18,437 [INFO] Período: 2026-06-01 a 2026-06-30
+2026-07-17 05:34:18,437 [INFO] Admin SDK Reports API: período 2026-06-01 a 2026-06-30
+2026-07-17 05:34:18,437 [INFO]   startTime=2026-06-01T00:00:00Z  endTime=2026-06-30T23:59:59Z
+2026-07-17 05:34:18,478 [INFO] file_cache is only supported with oauth2client<4.0.0
