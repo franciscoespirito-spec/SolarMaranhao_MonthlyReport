@@ -5,11 +5,11 @@ Exportação OFICIAL do Email Log Search (Google Admin Console) via Playwright.
 Baixa o CSV oficial — o único lugar onde o Google fornece o REMETENTE de todos
 os e-mails (inclusive os rejeitados na porta, que a Reports API não expõe).
 
-Estratégia anti-bug: NUNCA digita datas (o campo de intervalo personalizado tem
-um bug de máscara/validação conhecido). Usa apenas períodos PRÉ-DEFINIDOS do
-menu ("Últimos 30 dias" etc.). Roda toda semana; a sobreposição dos períodos
-garante cobertura completa mesmo em meses de 31 dias. A consolidação mensal é
-feita pelo consolidar_oficial.py.
+Estratégia anti-bug: NUNCA digita datas (o campo "Especificar o intervalo" tem
+um bug de máscara/validação conhecido). Usa o período PRÉ-DEFINIDO "Últimos 7
+dias" (o maior que existe no menu) e roda TODO DIA: cada dia fica coberto por
+até 7 execuções sobrepostas — redundância que tolera falhas e sessão expirada
+por alguns dias. A consolidação mensal (dedupe) é do consolidar_oficial.py.
 
 Uso:
     python3 exportar_oficial.py               # exportação normal (headless)
