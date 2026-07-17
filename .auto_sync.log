@@ -51860,3 +51860,9 @@ To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
 To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
    84e55da1..b022ee4d  main -> main
 [Fri Jul 17 06:46:58 UTC 2026] Sincronizado: auto: 2026-07-17 06:46:56 - MOVED_TO exportar_oficial.py
+[main c5a5e2a7] auto: 2026-07-17 06:47:13 - CREATE consolidar_oficial.py.tmp.4387.25592f37660b
+ 2 files changed, 120 insertions(+)
+ create mode 100644 compliance-email/consolidar_oficial.py
+To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
+   b022ee4d..c5a5e2a7  main -> main
+[Fri Jul 17 06:47:14 UTC 2026] Sincronizado: auto: 2026-07-17 06:47:13 - CREATE consolidar_oficial.py.tmp.4387.25592f37660b
