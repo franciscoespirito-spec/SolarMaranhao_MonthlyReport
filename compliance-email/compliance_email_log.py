@@ -4,7 +4,7 @@ Rotina Mensal - Log de E-mails de Compliance
 Usa Admin SDK Reports API para listar e-mails recebidos por compliance@beng.eng.br.
 Mesma fonte de dados do Google Admin Console > Relatórios > Pesquisa de logs de e-mail.
 
-Uso normal (mês corrente):
+Uso normal (mês anterior, já fechado — é o que o cron do dia 1 usa):
     python3 compliance_email_log.py
 
 Uso para mês específico:
