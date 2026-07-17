@@ -123,36 +123,47 @@ def escolher_opcao_periodo(page, texto):
 
 
 def mes_do_calendario(page):
-    """Texto do cabeçalho do calendário aberto (ex: 'julho de 2026')."""
+    """(ano, mês) do cabeçalho do calendário aberto (ex: 'julho de 2026' → (2026,7))."""
     import re
     els = page.get_by_text(re.compile(r"^[a-zçã]+ de \d{4}$", re.I))
     for i in range(min(els.count(), 8)):
         el = els.nth(i)
         try:
-            if el.is_visible():
-                return el.inner_text().strip().lower()
+            if not el.is_visible():
+                continue
+            txt = el.inner_text().strip().lower()
+            nome, _, ano = txt.partition(" de ")
+            for num, n in MESES_PT.items():
+                if n == nome.strip():
+                    return (int(ano), num)
         except Exception:
             pass
-    return ""
+    return None
 
 
-def mes_anterior(page):
-    for sel in ("[aria-label*='anterior' i]", "[aria-label*='previous' i]"):
-        if clicar_visivel(page.locator(sel)):
-            return True
-    return False
+def navegar_mes(page, direcao):
+    """direcao -1 = mês anterior, +1 = próximo mês (botões <div> com aria-label)."""
+    rotulo = "mês anterior" if direcao < 0 else "próximo mês"
+    return clicar_visivel(page.locator(f"[aria-label='{rotulo}']"))
 
 
 def clicar_dia(page, dia):
-    """Clica no número do dia dentro do calendário (grid) visível."""
-    grids = page.locator("[role='grid']")
-    grid = None
-    for i in range(grids.count()):
-        if grids.nth(i).is_visible():
-            grid = grids.nth(i)
-            break
-    alvo = (grid or page).get_by_text(str(dia), exact=True)
-    return clicar_visivel(alvo)
+    """Clica na CÉLULA (gridcell) do dia. Retorna True, 'disabled' ou False."""
+    gc = page.locator("[role='gridcell']")
+    for i in range(gc.count()):
+        e = gc.nth(i)
+        try:
+            if not e.is_visible():
+                continue
+            if (e.inner_text() or "").strip() != str(dia):
+                continue
+            if e.get_attribute("aria-disabled") == "true":
+                return "disabled"
+            e.click()
+            return True
+        except Exception:
+            continue
+    return False
 
 
 def valor_campo(page, rotulo):
