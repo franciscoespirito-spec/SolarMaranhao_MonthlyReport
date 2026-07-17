@@ -1565,3 +1565,9 @@ Execute no terminal do VS Code (VPS):
 2026-07-17 05:42:39,498 [INFO] file_cache is only supported with oauth2client<4.0.0
 2026-07-17 05:42:41,991 [INFO] Upload concluído: compliance_logs_2026-07-17_05-42-07.csv (ID: 1VdB8GniPRMS6cUjOMtXNElgy14CMnv0l)
 2026-07-17 05:42:41,991 [INFO] Rotina concluída com sucesso.
+2026-07-17 05:42:59,543 [INFO] ============================================================
+2026-07-17 05:42:59,543 [INFO] Iniciando rotina de compliance email log (Admin SDK Reports API)
+2026-07-17 05:42:59,543 [INFO] Período: 2026-07-01 a 2026-07-31
+2026-07-17 05:42:59,543 [INFO] Admin SDK Reports API: período 2026-07-01 a 2026-07-31
+2026-07-17 05:42:59,582 [INFO] file_cache is only supported with oauth2client<4.0.0
+2026-07-17 05:42:59,583 [INFO]   Bloco 2026-07-01 a 2026-07-15: startTime=2026-07-01T00:00:00Z  endTime=2026-07-15T23:59:59Z
