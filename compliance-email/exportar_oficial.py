@@ -151,19 +151,8 @@ def main():
                 continue
         if seletor_periodo is None:
             falha(page, "periodo", "não achei o seletor de período — a tela pode ter mudado")
-        seletor_periodo.click()
-        page.wait_for_timeout(1_500)
-        if DEBUG: shot(page, "03_menu_periodo_aberto")
 
-        # Registra as opções vistas (para depuração caso o Google mude a tela)
-        try:
-            todas = page.get_by_role("option")
-            textos = [todas.nth(i).inner_text().strip() for i in range(todas.count())]
-            log.info(f"Opções de período encontradas: {textos}")
-        except Exception:
-            textos = []
-
-        # Clica APENAS na opção VISÍVEL "Últimos 7 dias" (o Google duplica itens ocultos)
+        # Procura a opção VISÍVEL "Últimos 7 dias" (o Google duplica itens ocultos)
         def achar_visivel():
             candidatos = page.locator(SELETOR_OPCAO_7DIAS)
             for i in range(candidatos.count()):
@@ -171,13 +160,36 @@ def main():
                     return candidatos.nth(i)
             return None
 
-        alvo = achar_visivel()
-        if alvo is None:
-            # o menu pode ter fechado — reabre e tenta de novo
+        # O menu demora a renderizar: clica e SONDA com paciência antes de reabrir
+        def esperar_opcao(timeout_ms):
+            decorrido = 0
+            while decorrido < timeout_ms:
+                alvo = achar_visivel()
+                if alvo:
+                    return alvo
+                page.wait_for_timeout(500)
+                decorrido += 500
+            return None
+
+        alvo = None
+        for tentativa in range(1, 4):
+            log.info(f"Abrindo menu de período (tentativa {tentativa})")
+            seletor_periodo.scroll_into_view_if_needed()
             seletor_periodo.click()
-            page.wait_for_timeout(1_500)
-            alvo = achar_visivel()
+            alvo = esperar_opcao(8_000)
+            if alvo:
+                break
+            page.keyboard.press("Escape")   # fecha o que quer que tenha aberto
+            page.wait_for_timeout(1_000)
+        if DEBUG: shot(page, "03_menu_periodo_aberto")
+
         if alvo is None:
+            # registra as opções vistas para depuração
+            try:
+                todas = page.get_by_role("option")
+                textos = [todas.nth(i).inner_text().strip() for i in range(todas.count())]
+            except Exception:
+                textos = []
             falha(page, "preset", f"não achei opção VISÍVEL 'Últimos 7 dias'. Opções vistas: {textos}")
         log.info("Período escolhido: 'Últimos 7 dias'")
         alvo.click()
