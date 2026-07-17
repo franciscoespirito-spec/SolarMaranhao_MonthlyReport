@@ -52989,3 +52989,8 @@ To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
 To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
    26f2505f..4ccb7b7c  main -> main
 [Fri Jul 17 07:27:34 UTC 2026] Sincronizado: auto: 2026-07-17 07:27:32 - MOVED_FROM exportar_oficial.py.tmp.4387.b0b30f8faaa6
+[main 8b3bcdba] auto: 2026-07-17 07:27:37 - MOVED_TO exportar_oficial.py
+ 1 file changed, 5 insertions(+)
+To https://github.com/franciscoespirito-spec/SolarMaranhao_MonthlyReport.git
+   4ccb7b7c..8b3bcdba  main -> main
+[Fri Jul 17 07:27:38 UTC 2026] Sincronizado: auto: 2026-07-17 07:27:37 - MOVED_TO exportar_oficial.py
