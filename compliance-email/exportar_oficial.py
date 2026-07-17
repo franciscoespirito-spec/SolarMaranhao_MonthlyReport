@@ -634,9 +634,14 @@ def main():
             f.write(f"{datetime.now().isoformat()} janela={janela}d\n")
         if os.path.exists(FLAG_SESSAO):
             os.remove(FLAG_SESSAO)
-
-        print(f"OK: exportação oficial salva em {destino} ({tamanho} bytes, janela de {janela} dias)")
         browser.close()
+
+    # Sobe o arquivo de 30 dias (COMPLETO, sem filtrar mês) para o Google Drive
+    nome_drive = f"compliance_oficial_ultimos{janela}dias_{datetime.now().strftime('%Y-%m-%d')}.csv"
+    subiu = subir_para_drive(destino, nome_drive)
+
+    print(f"OK: exportação de {janela} dias salva ({tamanho} bytes)"
+          + (f" e enviada ao Drive como {nome_drive}" if subiu else " (Drive FALHOU — ver log)"))
 
 
 if __name__ == "__main__":
