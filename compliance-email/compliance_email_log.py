@@ -269,16 +269,23 @@ def fetch_email_logs(year: int, month: int, dest_path: str) -> int:
 
     log.info(f"E-mails únicos recebidos por {COMPLIANCE_EMAIL}: {len(por_mensagem)}")
 
+    # Remetente real via Gmail (só existe para mensagens que chegaram a alguma caixa)
+    entregues = [
+        msg_id for msg_id, eventos in por_mensagem.items()
+        if any(str(mi.get("action_type", "")) == "3" for mi, _ei, _dt in eventos)
+    ]
+    remetentes_reais = buscar_remetentes_reais(entregues)
+
     # Montar as linhas: status final pré-calculado e repetido em cada evento da mensagem
     rows = []
     for msg_id, eventos in por_mensagem.items():
         final = status_final(eventos)
-        remetente = remetente_estimado(msg_id)
+        remetente = remetentes_reais.get(msg_id) or remetente_estimado(msg_id)
         for mi, ei, data_evento in eventos:
             rows.append({
                 "data_evento":        data_evento,
                 "message_id":         msg_id,
-                "remetente_estimado": remetente,
+                "remetente":          remetente,
                 "assunto":            mi.get("subject", ""),
                 "etapa":              classificar_evento(mi, ei),
                 "detalhe_smtp":       " ".join(str(mi.get("description", "") or "").split()),
