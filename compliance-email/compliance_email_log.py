@@ -61,38 +61,42 @@ def get_period(year=None, month=None):
     return first_day, last_day, start_time, end_time
 
 
-def parse_params(parameters):
-    """Converte lista de parâmetros da API em dicionário."""
-    result = {}
+def get_nested(parameters, chave):
+    """Extrai os parâmetros aninhados (messageValue) de um parâmetro do evento.
+
+    Nos eventos de Gmail do Reports API, a informação real fica aninhada dentro de
+    'message_info' / 'event_info' (messageValue.parameter), e não no nível de cima.
+    """
     for p in parameters:
-        name = p.get("name")
-        if "value" in p:
-            result[name] = p["value"]
-        elif "multiValue" in p:
-            result[name] = p["multiValue"]
-        elif "intValue" in p:
-            result[name] = p["intValue"]
-        elif "boolValue" in p:
-            result[name] = p["boolValue"]
-    return result
+        if p.get("name") == chave and "messageValue" in p:
+            result = {}
+            for q in p["messageValue"].get("parameter", []):
+                name = q.get("name")
+                if "value" in q:
+                    result[name] = q["value"]
+                elif "boolValue" in q:
+                    result[name] = q["boolValue"]
+                elif "intValue" in q:
+                    result[name] = q["intValue"]
+                elif "multiValue" in q:
+                    result[name] = q["multiValue"]
+            return result
+    return {}
 
 
-def map_status(smtp_code, event_info):
-    """Mapeia código SMTP e event_info para status em português."""
-    code = str(smtp_code or "")
-    info = str(event_info or "").upper()
-
-    if code.startswith("2") or info == "DELIVERED":
+def map_status(event_info, message_info):
+    """Determina o status da entrega a partir dos campos aninhados."""
+    if message_info.get("is_spam") is True:
+        return "Spam"
+    success = event_info.get("success")
+    if success is True:
         return "Entregue"
-    elif code.startswith("5") or info in ("REJECTED", "BOUNCE"):
-        return "Rejeitado"
-    elif code.startswith("4"):
-        return "Bloqueado"
-    else:
-        return info if info else "Desconhecido"
+    if success is False:
+        return "Falhou"
+    return "Desconhecido"
 
 
-STATUS_PRIORITY = {"Entregue": 3, "Rejeitado": 2, "Bloqueado": 1, "Desconhecido": 0}
+STATUS_PRIORITY = {"Entregue": 3, "Spam": 2, "Falhou": 1, "Desconhecido": 0}
 
 
 def fetch_email_logs(year: int, month: int, dest_path: str) -> int:
