@@ -304,7 +304,7 @@ def fetch_email_logs(year: int, month: int, dest_path: str) -> int:
             pass
 
     # Salvar CSV (utf-8-sig: abre com acentos corretos no Excel)
-    fieldnames = ["data_evento", "message_id", "remetente_estimado", "assunto", "etapa",
+    fieldnames = ["data_evento", "message_id", "remetente", "assunto", "etapa",
                   "detalhe_smtp", "tamanho_bytes", "anexos", "status_final"]
     with open(dest_path, "w", newline="", encoding="utf-8-sig") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
