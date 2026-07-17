@@ -1668,3 +1668,5 @@ Execute no terminal do VS Code (VPS):
 2026-07-17 06:21:30,177 [INFO] Remetentes reais encontrados via Gmail: 1/2
 2026-07-17 06:21:30,247 [INFO] CSV salvo: /root/projetos/compliance-email/logs/compliance_logs_2026-07-17_06-21-09.csv (122 linhas de evento, 38 mensagens)
 2026-07-17 06:21:30,352 [INFO] file_cache is only supported with oauth2client<4.0.0
+2026-07-17 06:21:32,958 [INFO] Upload concluído: compliance_logs_2026-07-17_06-21-09.csv (ID: 1YLszJVp5xaoIyPPvWlg2847l-oJy-pp1)
+2026-07-17 06:21:32,959 [INFO] Rotina concluída com sucesso.
