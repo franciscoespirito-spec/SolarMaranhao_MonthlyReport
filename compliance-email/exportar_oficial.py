@@ -376,13 +376,35 @@ def selecionar_intervalo_maximo(page):
     if DEBUG: shot(page, "03a_intervalo_selecionado")
 
     hoje = datetime.now(timezone.utc).date()
-    # 1) "Até" = hoje (mês atual, clica o dia de hoje)
-    if not definir_data(page, "Até", hoje):
-        raise RuntimeError("não consegui definir 'Até' = hoje")
-    # 2) "De" = data habilitada mais antiga (o próprio limite do Google, ~30 dias)
-    de = definir_de_mais_antiga(page)
+
+    def confere(rotulo, data):
+        v = valor_campo(page, rotulo)
+        return v.startswith(data.strftime("%Y-%m-%d")), v
+
+    # 1) "De" = data habilitada mais antiga (o próprio limite do Google, ~30 dias)
+    de = None
+    for _ in range(3):
+        de = definir_de_mais_antiga(page)
+        if de and confere("De", de)[0]:
+            break
+        log.warning(f"  'De' não confirmou (obtido '{valor_campo(page,'De')}'); repetindo")
+        de = None
     if de is None:
         raise RuntimeError("não consegui definir 'De' (data mais antiga)")
+    log.info(f"'De' definido = {de} (campo='{valor_campo(page,'De')}')")
+
+    # 2) "Até" = hoje — POR ÚLTIMO, com verificação (não pode ficar = De)
+    ok_ate = False
+    for _ in range(3):
+        definir_data(page, "Até", hoje)
+        ok, v = confere("Até", hoje)
+        log.info(f"  'Até' tentativa: campo='{v}' (ok={ok})")
+        if ok:
+            ok_ate = True
+            break
+    if not ok_ate:
+        raise RuntimeError(f"'Até' não virou {hoje} (ficou '{valor_campo(page,'Até')}')")
+
     dias = (hoje - de).days
     de_v, ate_v = valor_campo(page, "De"), valor_campo(page, "Até")
     log.info(f"Janela escolhida: {de} → {hoje} ({dias} dias) | campos De='{de_v}' Até='{ate_v}'")
