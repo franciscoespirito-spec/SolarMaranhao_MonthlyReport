@@ -1621,3 +1621,6 @@ Execute no terminal do VS Code (VPS):
 2026-07-17 06:11:19,026 [INFO]   Bloco 2026-05-01 a 2026-05-15: startTime=2026-05-01T00:00:00Z  endTime=2026-05-15T23:59:59Z
 2026-07-17 06:11:21,236 [INFO]   Página 1: 1000 atividades (total acumulado: 1000)
 2026-07-17 06:11:22,993 [INFO]   Página 2: 1000 atividades (total acumulado: 2000)
+2026-07-17 06:11:24,657 [INFO]   Página 3: 1000 atividades (total acumulado: 3000)
+2026-07-17 06:11:26,440 [INFO]   Página 4: 1000 atividades (total acumulado: 4000)
+2026-07-17 06:11:28,064 [INFO]   Página 5: 1000 atividades (total acumulado: 5000)
