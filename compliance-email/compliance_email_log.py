@@ -13,6 +13,7 @@ Uso para mês específico:
 
 import csv
 import os
+import re
 import sys
 import logging
 from calendar import monthrange
