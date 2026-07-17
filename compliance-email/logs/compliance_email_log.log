@@ -1611,3 +1611,5 @@ Execute no terminal do VS Code (VPS):
 2026-07-17 06:10:36,705 [INFO] E-mails únicos recebidos por compliance@beng.eng.br: 38
 2026-07-17 06:10:36,710 [INFO] CSV salvo: /root/projetos/compliance-email/logs/compliance_logs_2026-07-17_06-10-17.csv (122 linhas de evento, 38 mensagens)
 2026-07-17 06:10:36,826 [INFO] file_cache is only supported with oauth2client<4.0.0
+2026-07-17 06:10:39,662 [INFO] Upload concluído: compliance_logs_2026-07-17_06-10-17.csv (ID: 1_l6MCeZ7LwQc91wEfdDBOCw-yhLWRZgE)
+2026-07-17 06:10:39,662 [INFO] Rotina concluída com sucesso.
