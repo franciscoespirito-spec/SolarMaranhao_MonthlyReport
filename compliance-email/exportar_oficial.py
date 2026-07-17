@@ -179,26 +179,37 @@ def valor_campo(page, rotulo):
 
 
 def definir_data(page, rotulo, data):
-    """Define um campo de data ('De'/'Até') SÓ COM CLIQUES no calendário."""
+    """Define um campo de data ('De'/'Até') SÓ COM CLIQUES no calendário.
+
+    Navega nos dois sentidos (mês anterior/próximo) até o mês-alvo e clica no dia.
+    """
     campo = page.locator(f"input[aria-label='{rotulo}']")
     if not clicar_visivel(campo):
         log.warning(f"campo '{rotulo}' não encontrado")
         return False
     page.wait_for_timeout(1_200)
-    alvo = f"{MESES_PT[data.month]} de {data.year}"
-    for _ in range(4):  # navega no máximo 4 meses para trás
-        cabecalho = mes_do_calendario(page)
-        if alvo in cabecalho:
+    alvo = (data.year, data.month)
+    for _ in range(15):
+        atual = mes_do_calendario(page)
+        if atual is None:
+            log.warning(f"  não li o mês do calendário para '{rotulo}'")
+            return False
+        if atual == alvo:
             break
-        log.info(f"  calendário em '{cabecalho}', navegando p/ '{alvo}'")
-        if not mes_anterior(page):
-            log.warning("  botão de mês anterior não encontrado")
+        direcao = -1 if alvo < atual else 1
+        log.info(f"  '{rotulo}': calendário em {atual}, indo p/ {alvo} (dir={direcao})")
+        if not navegar_mes(page, direcao):
+            log.warning("  botão de navegação de mês não encontrado")
             return False
         page.wait_for_timeout(700)
     else:
         return False
-    if not clicar_dia(page, data.day):
-        log.warning(f"  dia {data.day} não clicável")
+    r = clicar_dia(page, data.day)
+    if r == "disabled":
+        log.warning(f"  dia {data.day} está DESABILITADO (futuro?) no calendário de '{rotulo}'")
+        return False
+    if not r:
+        log.warning(f"  dia {data.day} não clicável em '{rotulo}'")
         return False
     page.wait_for_timeout(800)
     return True
