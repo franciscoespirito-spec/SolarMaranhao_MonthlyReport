@@ -122,23 +122,48 @@ def escolher_opcao_periodo(page, texto):
     return False
 
 
-def mes_do_calendario(page):
-    """(ano, mês) do cabeçalho do calendário aberto (ex: 'julho de 2026' → (2026,7))."""
+def mes_do_calendario(page, timeout_ms=6000):
+    """(ano, mês) do cabeçalho do calendário (ex: 'julho de 2026' → (2026,7)).
+
+    Relê em loop até o timeout (o cabeçalho às vezes demora a renderizar).
+    """
     import re
-    els = page.get_by_text(re.compile(r"^[a-zçã]+ de \d{4}$", re.I))
-    for i in range(min(els.count(), 8)):
-        el = els.nth(i)
-        try:
-            if not el.is_visible():
-                continue
-            txt = el.inner_text().strip().lower()
-            nome, _, ano = txt.partition(" de ")
-            for num, n in MESES_PT.items():
-                if n == nome.strip():
-                    return (int(ano), num)
-        except Exception:
-            pass
+    pat = re.compile(r"^([a-zçãáéíóúâêô]+) de (\d{4})$", re.I)
+    decorrido = 0
+    while decorrido < timeout_ms:
+        els = page.get_by_text(pat)
+        for i in range(min(els.count(), 8)):
+            el = els.nth(i)
+            try:
+                if not el.is_visible():
+                    continue
+                m = pat.match(el.inner_text().strip().lower())
+                if not m:
+                    continue
+                nome, ano = m.group(1), m.group(2)
+                for num, n in MESES_PT.items():
+                    if n == nome:
+                        return (int(ano), num)
+            except Exception:
+                pass
+        page.wait_for_timeout(500)
+        decorrido += 500
     return None
+
+
+def abrir_calendario(page, rotulo):
+    """Clica no campo de data e espera o calendário (gridcell) renderizar."""
+    campo = page.locator(f"input[aria-label='{rotulo}']")
+    for _ in range(3):
+        if not clicar_visivel(campo):
+            return False
+        try:
+            page.wait_for_selector("[role='gridcell']", state="visible", timeout=5000)
+            page.wait_for_timeout(400)
+            return True
+        except Exception:
+            page.wait_for_timeout(600)
+    return False
 
 
 def navegar_mes(page, direcao):
