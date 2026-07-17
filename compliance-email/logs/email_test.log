@@ -131,3 +131,7 @@ Call log:
 }
 [2026-07-17 05:05:54] ERRO
 [2026-07-17 05:07:36] Iniciando - Label: Teste_2026_07
+[2026-07-17 05:07:41] Status: 200 - {
+    "success": true
+}
+[2026-07-17 05:07:41] SUCESSO!
