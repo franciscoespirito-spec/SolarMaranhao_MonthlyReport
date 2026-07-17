@@ -1,0 +1,13 @@
+# ===== SEGREDOS — NUNCA enviar ao GitHub =====
+# Credenciais do Google e sessões (qualquer pasta credentials/)
+**/credentials/
+*.INVALIDA_backup*
+service_account*.json
+
+# Ambientes e variáveis com senhas
+.env
+*.env
+
+# Arquivos compilados do Python (lixo)
+__pycache__/
+*.pyc
