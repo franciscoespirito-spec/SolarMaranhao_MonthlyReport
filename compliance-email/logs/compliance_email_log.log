@@ -1619,3 +1619,5 @@ Execute no terminal do VS Code (VPS):
 2026-07-17 06:11:18,984 [INFO] Admin SDK Reports API: período 2026-05-01 a 2026-05-31
 2026-07-17 06:11:19,025 [INFO] file_cache is only supported with oauth2client<4.0.0
 2026-07-17 06:11:19,026 [INFO]   Bloco 2026-05-01 a 2026-05-15: startTime=2026-05-01T00:00:00Z  endTime=2026-05-15T23:59:59Z
+2026-07-17 06:11:21,236 [INFO]   Página 1: 1000 atividades (total acumulado: 1000)
+2026-07-17 06:11:22,993 [INFO]   Página 2: 1000 atividades (total acumulado: 2000)
