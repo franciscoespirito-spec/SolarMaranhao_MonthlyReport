@@ -85,19 +85,63 @@ def get_nested(parameters, chave):
     return {}
 
 
-def map_status(event_info, message_info):
-    """Determina o status da entrega a partir dos campos aninhados."""
-    if message_info.get("is_spam") is True:
-        return "Spam"
-    success = event_info.get("success")
-    if success is True:
-        return "Entregue"
-    if success is False:
-        return "Falhou"
-    return "Desconhecido"
+def classificar_evento(message_info, event_info):
+    """Traduz um evento para a etapa equivalente do Email Log Search oficial.
+
+    Regras validadas contra o export oficial do Admin Console (17/07/2026):
+      action_type 1/68                → RECEBIDO (SMTP) — description traz o código
+      action_type 2 + success=True    → PROCESSADO (aceito, a caminho da caixa)
+      action_type 2 + success=False   → REJEITADO
+      action_type 3 + is_spam=False   → ENTREGUE (caixa de entrada)
+      action_type 3 + is_spam=True    → ENTREGUE (caixa de SPAM)
+    """
+    acao = str(message_info.get("action_type", ""))
+    if acao in ("1", "68"):
+        return "RECEBIDO (SMTP)"
+    if acao == "2":
+        return "PROCESSADO" if event_info.get("success") is True else "REJEITADO"
+    if acao == "3":
+        if message_info.get("is_spam") is True:
+            return "ENTREGUE (caixa de SPAM)"
+        return "ENTREGUE (caixa de entrada)"
+    return f"EVENTO (action_type={acao})"
 
 
-STATUS_PRIORITY = {"Entregue": 3, "Spam": 2, "Falhou": 1, "Desconhecido": 0}
+def remetente_estimado(msg_id):
+    """Estima o domínio do remetente pelo rfc2822_message_id.
+
+    A Reports API não expõe o remetente (campo source vem vazio); o domínio do
+    message-id é a melhor aproximação disponível. Ex.:
+    <20260614...@fjsanyuan.com> → "fjsanyuan.com (estimado)".
+    IDs adicionados pelo próprio Google (mx.google.com / SMTPIN_ADDED_MISSING)
+    não indicam o remetente e ficam em branco.
+    """
+    m = re.search(r"@([^>@\s]+)>?\s*$", msg_id or "")
+    if not m:
+        return ""
+    dominio = m.group(1).strip(">").lower()
+    if "smtpin_added_missing" in (msg_id or "").lower() or dominio == "mx.google.com":
+        return ""
+    return f"{dominio} (estimado)"
+
+
+def status_final(eventos):
+    """Status final da mensagem, igual à leitura da tela oficial.
+
+    Houve entrega final (action_type=3)? → Entregue (entrada ou SPAM).
+    Não houve → Rejeitado: definitivo (código 5xx) ou temporário (4xx).
+    """
+    for mi, _ei, _dt in eventos:
+        if str(mi.get("action_type", "")) == "3":
+            if mi.get("is_spam") is True:
+                return "Entregue (caixa de SPAM)"
+            return "Entregue (caixa de entrada)"
+    codigos = [str(mi.get("description", "") or "") for mi, _ei, _dt in eventos]
+    if any(c.startswith("5") for c in codigos):
+        return "Rejeitado (definitivo)"
+    if any(c.startswith("4") for c in codigos):
+        return "Rejeitado (temporário)"
+    return "Rejeitado"
 
 
 def fetch_email_logs(year: int, month: int, dest_path: str) -> int:
