@@ -1651,3 +1651,6 @@ Execute no terminal do VS Code (VPS):
 2026-07-17 06:21:09,307 [INFO] file_cache is only supported with oauth2client<4.0.0
 2026-07-17 06:21:09,308 [INFO]   Bloco 2026-07-01 a 2026-07-15: startTime=2026-07-01T00:00:00Z  endTime=2026-07-15T23:59:59Z
 2026-07-17 06:21:11,399 [INFO]   Página 1: 1000 atividades (total acumulado: 1000)
+2026-07-17 06:21:13,191 [INFO]   Página 2: 1000 atividades (total acumulado: 2000)
+2026-07-17 06:21:14,922 [INFO]   Página 3: 1000 atividades (total acumulado: 3000)
+2026-07-17 06:21:16,749 [INFO]   Página 4: 1000 atividades (total acumulado: 4000)
