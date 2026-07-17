@@ -260,11 +260,9 @@ def definir_data(page, rotulo, data):
 
     Navega nos dois sentidos (mês anterior/próximo) até o mês-alvo e clica no dia.
     """
-    campo = page.locator(f"input[aria-label='{rotulo}']")
-    if not clicar_visivel(campo):
-        log.warning(f"campo '{rotulo}' não encontrado")
+    if not abrir_calendario(page, rotulo):
+        log.warning(f"calendário de '{rotulo}' não abriu")
         return False
-    page.wait_for_timeout(1_200)
     alvo = (data.year, data.month)
     for _ in range(15):
         atual = mes_do_calendario(page)
