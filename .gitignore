@@ -11,3 +11,6 @@ service_account*.json
 # Arquivos compilados do Python (lixo)
 __pycache__/
 *.pyc
+
+# Dados de compliance (privados — não publicar no GitHub)
+compliance-email/logs/
