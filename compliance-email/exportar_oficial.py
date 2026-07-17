@@ -220,9 +220,8 @@ def definir_de_mais_antiga(page):
     Retorna a data (date) escolhida ou None.
     """
     from datetime import date
-    if not clicar_visivel(page.locator("input[aria-label='De']")):
+    if not abrir_calendario(page, "De"):
         return None
-    page.wait_for_timeout(1_200)
     if mes_do_calendario(page) is None:
         return None
     # tenta o mês anterior; se não houver dia habilitado lá, usa o mês atual
