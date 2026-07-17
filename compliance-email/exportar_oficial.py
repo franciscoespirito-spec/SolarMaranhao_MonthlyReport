@@ -349,6 +349,27 @@ def erro_de_intervalo(page):
     return None
 
 
+def subir_para_drive(caminho_csv, nome_drive):
+    """Sobe o CSV para o Google Drive (reusa upload_to_drive do compliance_email_log)."""
+    try:
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("cel", f"{BASE}/compliance_email_log.py")
+        cel = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(cel)
+        from google.oauth2 import service_account
+        from googleapiclient.discovery import build
+        creds = service_account.Credentials.from_service_account_file(
+            cel.SERVICE_ACCOUNT_FILE, scopes=cel.DRIVE_SCOPES
+        ).with_subject(cel.DELEGATED_USER)
+        drive = build("drive", "v3", credentials=creds)
+        cel.upload_to_drive(drive, caminho_csv, nome_drive)
+        log.info(f"Drive: enviado '{nome_drive}'")
+        return True
+    except Exception as e:
+        log.warning(f"Falha ao subir ao Drive: {e}")
+        return False
+
+
 def clicar_pesquisar(page):
     for fabrica in [
         lambda: page.get_by_role("button", name="Pesquisar"),
